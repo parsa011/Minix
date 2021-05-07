@@ -209,7 +209,7 @@ int how;
    * scheduled by setting a watchog timer that calls shutdown(). The timer 
    * argument passes the shutdown status. 
    */
-  kprintf("MINIX will now be shut down ...\n");
+  kprintf("خاموش شدن ...\n");
   tmr_arg(&shutdown_timer)->ta_int = how;
 
   /* Continue after 1 second, to give processes a chance to get

@@ -18,8 +18,8 @@
 /*==========================================================================*
  *				do_new_kmess				    *
  *==========================================================================*/
-PUBLIC int do_new_kmess(m)
-message *m;					/* notification message */
+/* notification message */
+PUBLIC int do_new_kmess(message *m)
 {
 /* Notification for a new kernel message. */
   struct kmessages kmess;		/* entire kmess structure */

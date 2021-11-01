@@ -12,8 +12,7 @@
 /*===========================================================================*
  *				kputc					     *
  *===========================================================================*/
-void kputc(c)
-int c;
+void kputc(int c)
 {
 /* Accumulate another character.  If 0 or buffer full, print it. */
   static int buf_count;		/* # characters in the buffer */

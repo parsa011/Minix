@@ -101,8 +101,7 @@ FORWARD _PROTOTYPE( unsigned map_key, (int scode) 			);
 /*===========================================================================*
  *				map_key					     *
  *===========================================================================*/
-PRIVATE unsigned map_key(scode)
-int scode;
+PRIVATE unsigned map_key(int scode)
 {
 /* Map a scan code to an ASCII code. */
 
@@ -133,8 +132,7 @@ int scode;
 /*===========================================================================*
  *				kbd_interrupt				     *
  *===========================================================================*/
-PUBLIC void kbd_interrupt(m_ptr)
-message *m_ptr;
+PUBLIC void kbd_interrupt(message *m_ptr)
 {
 /* A keyboard interrupt has occurred.  Process it. */
   int scode;
@@ -158,9 +156,7 @@ message *m_ptr;
 /*===========================================================================*
  *				kb_read					     *
  *===========================================================================*/
-PRIVATE int kb_read(tp, try)
-tty_t *tp;
-int try;
+PRIVATE int kb_read(tty_t *tp, int try)
 {
 /* Process characters from the circular keyboard buffer. */
   char buf[3];
@@ -229,8 +225,8 @@ int try;
 /*===========================================================================*
  *				make_break				     *
  *===========================================================================*/
-PRIVATE unsigned make_break(scode)
-int scode;			/* scan code of key just struck or released */
+/* scan code of key just struck or released */
+PRIVATE unsigned make_break(int scode)
 {
 /* This routine can handle keyboards that interrupt only on key depression,
  * as well as keyboards that interrupt on key depression and key release.
@@ -370,8 +366,7 @@ PRIVATE int kb_ack()
 /*===========================================================================*
  *				kb_init					     *
  *===========================================================================*/
-PUBLIC void kb_init(tp)
-tty_t *tp;
+PUBLIC void kb_init(tty_t *tp)
 {
 /* Initialize the keyboard driver. */
 
@@ -408,8 +403,7 @@ PUBLIC void kb_init_once(void)
 /*===========================================================================*
  *				kbd_loadmap				     *
  *===========================================================================*/
-PUBLIC int kbd_loadmap(m)
-message *m;
+PUBLIC int kbd_loadmap(message *m)
 {
 /* Load a new keymap. */
   int result;
@@ -422,8 +416,8 @@ message *m;
 /*===========================================================================*
  *				do_fkey_ctl				     *
  *===========================================================================*/
-PUBLIC void do_fkey_ctl(m_ptr)
-message *m_ptr;			/* pointer to the request message */
+/* pointer to the request message */
+PUBLIC void do_fkey_ctl(message *m_ptr)
 {
 /* This procedure allows processes to register a function key to receive
  * notifications if it is pressed. At most one binding per key can exist.
@@ -513,8 +507,8 @@ message *m_ptr;			/* pointer to the request message */
 /*===========================================================================*
  *				func_key				     *
  *===========================================================================*/
-PRIVATE int func_key(scode)
-int scode;			/* scan code for a function key */
+/* scan code for a function key */
+PRIVATE int func_key(int scode)
 {
 /* This procedure traps function keys for debugging purposes. Observers of 
  * function keys are kept in a global array. If a subject (a key) is pressed
@@ -617,8 +611,8 @@ PRIVATE int scan_keyboard()
 /*===========================================================================*
  *				do_panic_dumps 				     *
  *===========================================================================*/
-PUBLIC void do_panic_dumps(m)
-message *m;			/* request message to TTY */
+/* request message to TTY */
+PUBLIC void do_panic_dumps(message *m)
 {
 /* Wait for keystrokes for printing debugging info and reboot. */
   int quiet, code;

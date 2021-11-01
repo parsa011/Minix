@@ -24,11 +24,11 @@ FORWARD _PROTOTYPE( void sort, (struct part_entry *table) );
 /*============================================================================*
  *				partition				      *
  *============================================================================*/
-PUBLIC void partition(dp, device, style, atapi)
-struct driver *dp;	/* device dependent entry points */
-int device;		/* device to partition */
-int style;		/* partitioning style: floppy, primary, sub. */
-int atapi;		/* atapi device */
+/* device dependent entry points */
+/* device to partition */
+/* partitioning style: floppy, primary, sub. */
+/* atapi device */
+PUBLIC void partition(struct driver *dp, int device, int style, int atapi)
 {
 /* This routine is called on first open to initialize the partition tables
  * of a device.  It makes sure that each partition falls safely within the
@@ -99,10 +99,10 @@ int atapi;		/* atapi device */
 /*============================================================================*
  *				extpartition				      *
  *============================================================================*/
-PRIVATE void extpartition(dp, extdev, extbase)
-struct driver *dp;	/* device dependent entry points */
-int extdev;		/* extended partition to scan */
-unsigned long extbase;	/* sector offset of the base extended partition */
+/* device dependent entry points */
+/* extended partition to scan */
+/* sector offset of the base extended partition */
+PRIVATE void extpartition(struct driver *dp, int extdev, unsigned long extbase)
 {
 /* Extended partitions cannot be ignored alas, because people like to move
  * files to and from DOS partitions.  Avoid reading this code, it's no fun.
@@ -147,11 +147,7 @@ unsigned long extbase;	/* sector offset of the base extended partition */
 /*============================================================================*
  *				get_part_table				      *
  *============================================================================*/
-PRIVATE int get_part_table(dp, device, offset, table)
-struct driver *dp;
-int device;
-unsigned long offset;		/* sector offset to the table */
-struct part_entry *table;	/* four entries */
+PRIVATE int get_part_table(struct driver *dp, int device, unsigned long offset /* sector offset to the table */ , struct part_entry *table /* four entries */)
 {
 /* Read the partition table for the device, return true iff there were no
  * errors.
@@ -180,8 +176,7 @@ struct part_entry *table;	/* four entries */
 /*===========================================================================*
  *				sort					     *
  *===========================================================================*/
-PRIVATE void sort(table)
-struct part_entry *table;
+PRIVATE void sort(struct part_entry *table)
 {
 /* Sort a partition table. */
   struct part_entry *pe, tmp;

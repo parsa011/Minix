@@ -55,8 +55,7 @@ int device_caller;
 /*===========================================================================*
  *				driver_task				     *
  *===========================================================================*/
-PUBLIC void driver_task(dp)
-struct driver *dp;	/* Device dependent entry points. */
+PUBLIC void driver_task(struct driver *dp)/* Device dependent entry points. */
 {
 /* Main program of any device driver task. */
 
@@ -146,9 +145,9 @@ PRIVATE void init_buffer()
 /*===========================================================================*
  *				do_rdwt					     *
  *===========================================================================*/
-PRIVATE int do_rdwt(dp, mp)
-struct driver *dp;		/* device dependent entry points */
-message *mp;			/* pointer to read or write message */
+/* device dependent entry points */
+/* pointer to read or write message */
+PRIVATE int do_rdwt(struct driver *dp,message *mp)
 {
 /* Carry out a single read or write request. */
   iovec_t iovec1;
@@ -180,9 +179,9 @@ message *mp;			/* pointer to read or write message */
 /*==========================================================================*
  *				do_vrdwt				    *
  *==========================================================================*/
-PRIVATE int do_vrdwt(dp, mp)
-struct driver *dp;	/* device dependent entry points */
-message *mp;		/* pointer to read or write message */
+/* device dependent entry points */
+/* pointer to read or write message */
+PRIVATE int do_vrdwt(struct driver *dp, message *mp)
 {
 /* Carry out an device read or write to/from a vector of user addresses.
  * The "user addresses" are assumed to be safe, i.e. FS transferring to/from
@@ -242,9 +241,7 @@ PUBLIC char *no_name()
 /*============================================================================*
  *				do_nop					      *
  *============================================================================*/
-PUBLIC int do_nop(dp, mp)
-struct driver *dp;
-message *mp;
+PUBLIC int do_nop(struct driver *dp, message *mp)
 {
 /* Nothing there, or nothing to do. */
 
@@ -259,9 +256,7 @@ message *mp;
 /*============================================================================*
  *				nop_signal			  	      *
  *============================================================================*/
-PUBLIC void nop_signal(dp, mp)
-struct driver *dp;
-message *mp;
+PUBLIC void nop_signal(struct driver *dp, message *mp)
 {
 /* Default action for signal is to ignore. */
 }
@@ -269,9 +264,7 @@ message *mp;
 /*============================================================================*
  *				nop_alarm				      *
  *============================================================================*/
-PUBLIC void nop_alarm(dp, mp)
-struct driver *dp;
-message *mp;
+PUBLIC void nop_alarm(struct driver *dp, message *mp)
 {
 /* Ignore the leftover alarm. */
 }
@@ -314,9 +307,8 @@ PUBLIC int nop_select(struct driver *dr, message *m)
 /*============================================================================*
  *				do_diocntl				      *
  *============================================================================*/
-PUBLIC int do_diocntl(dp, mp)
-struct driver *dp;
-message *mp;			/* pointer to ioctl request */
+/* pointer to ioctl request */
+PUBLIC int do_diocntl(struct driver *dp, message *mp)
 {
 /* Carry out a partition setting/getting request. */
   struct device *dv;

@@ -280,8 +280,7 @@ PUBLIC void main(void)
 /*===========================================================================*
  *				do_status				     *
  *===========================================================================*/
-PRIVATE void do_status(m_ptr)
-message *m_ptr;
+PRIVATE void do_status(message *m_ptr)
 {
   register struct tty *tp;
   int event_found;
@@ -351,9 +350,9 @@ message *m_ptr;
 /*===========================================================================*
  *				do_read					     *
  *===========================================================================*/
-PRIVATE void do_read(tp, m_ptr)
-register tty_t *tp;		/* pointer to tty struct */
-register message *m_ptr;	/* pointer to message sent to the task */
+/* pointer to tty struct */
+/* pointer to message sent to the task */
+PRIVATE void do_read(register tty_t *tp, register message *m_ptr)
 {
 /* A process wants to read from a terminal. */
   int r, status;
@@ -427,9 +426,8 @@ register message *m_ptr;	/* pointer to message sent to the task */
 /*===========================================================================*
  *				do_write				     *
  *===========================================================================*/
-PRIVATE void do_write(tp, m_ptr)
-register tty_t *tp;
-register message *m_ptr;	/* pointer to message sent to the task */
+/* pointer to message sent to the task */
+PRIVATE void do_write(register tty_t *tp, register message *m_ptr)
 {
 /* A process wants to write on a terminal. */
   int r;
@@ -477,9 +475,8 @@ register message *m_ptr;	/* pointer to message sent to the task */
 /*===========================================================================*
  *				do_ioctl				     *
  *===========================================================================*/
-PRIVATE void do_ioctl(tp, m_ptr)
-register tty_t *tp;
-message *m_ptr;			/* pointer to message sent to task */
+/* pointer to message sent to task */
+PRIVATE void do_ioctl(register tty_t *tp, message *m_ptr)
 {
 /* Perform an IOCTL on this terminal. Posix termios calls are handled
  * by the IOCTL system call
@@ -632,9 +629,8 @@ message *m_ptr;			/* pointer to message sent to task */
 /*===========================================================================*
  *				do_open					     *
  *===========================================================================*/
-PRIVATE void do_open(tp, m_ptr)
-register tty_t *tp;
-message *m_ptr;			/* pointer to message sent to task */
+/* pointer to message sent to task */
+PRIVATE void do_open(register tty_t *tp, message *m_ptr)
 {
 /* A tty line has been opened.  Make it the callers controlling tty if
  * O_NOCTTY is *not* set and it is not the log device.  1 is returned if
@@ -658,9 +654,8 @@ message *m_ptr;			/* pointer to message sent to task */
 /*===========================================================================*
  *				do_close				     *
  *===========================================================================*/
-PRIVATE void do_close(tp, m_ptr)
-register tty_t *tp;
-message *m_ptr;			/* pointer to message sent to task */
+/* pointer to message sent to task */
+PRIVATE void do_close(register tty_t *tp, message *m_ptr)
 {
 /* A tty line has been closed.  Clean up the line if it is the last close. */
 
@@ -679,9 +674,8 @@ message *m_ptr;			/* pointer to message sent to task */
 /*===========================================================================*
  *				do_cancel				     *
  *===========================================================================*/
-PRIVATE void do_cancel(tp, m_ptr)
-register tty_t *tp;
-message *m_ptr;			/* pointer to message sent to task */
+/* pointer to message sent to task */
+PRIVATE void do_cancel(register tty_t *tp, message *m_ptr)
 {
 /* A signal has been sent to a process that is hanging trying to read or write.
  * The pending read or write must be finished off immediately.
@@ -756,8 +750,8 @@ PUBLIC int select_retry(struct tty *tp)
 /*===========================================================================*
  *				handle_events				     *
  *===========================================================================*/
-PUBLIC void handle_events(tp)
-tty_t *tp;			/* TTY to check for events. */
+/* TTY to check for events. */
+PUBLIC void handle_events(tty_t *tp)
 {
 /* Handle any events pending on a TTY.  These events are usually device
  * interrupts.
@@ -814,8 +808,8 @@ tty_t *tp;			/* TTY to check for events. */
 /*===========================================================================*
  *				in_transfer				     *
  *===========================================================================*/
-PRIVATE void in_transfer(tp)
-register tty_t *tp;		/* pointer to terminal to read from */
+/* pointer to terminal to read from */
+PRIVATE void in_transfer(register tty_t *tp)
 {
 /* Transfer bytes from the input queue to a process reading from a terminal. */
 
@@ -884,10 +878,10 @@ register tty_t *tp;		/* pointer to terminal to read from */
 /*===========================================================================*
  *				in_process				     *
  *===========================================================================*/
-PUBLIC int in_process(tp, buf, count)
-register tty_t *tp;		/* terminal on which character has arrived */
-char *buf;			/* buffer with input characters */
-int count;			/* number of input characters */
+/* terminal on which character has arrived */
+/* buffer with input characters */
+/* number of input characters */
+PUBLIC int in_process(register tty_t *tp, char *buf, int count)
 {
 /* Characters have just been typed in.  Process, save, and echo them.  Return
  * the number of characters processed.
@@ -1045,9 +1039,9 @@ int count;			/* number of input characters */
 /*===========================================================================*
  *				echo					     *
  *===========================================================================*/
-PRIVATE int tty_echo(tp, ch)
-register tty_t *tp;		/* terminal on which to echo */
-register int ch;		/* pointer to character to echo */
+/* terminal on which to echo */
+/* pointer to character to echo */
+PRIVATE int tty_echo(register tty_t *tp, register int ch)
 {
 /* Echo the character if echoing is on.  Some control characters are echoed
  * with their normal effect, other control characters are echoed as "^X",
@@ -1106,9 +1100,7 @@ register int ch;		/* pointer to character to echo */
 /*===========================================================================*
  *				rawecho					     *
  *===========================================================================*/
-PRIVATE void rawecho(tp, ch)
-register tty_t *tp;
-int ch;
+PRIVATE void rawecho(register tty_t *tp, int ch)
 {
 /* Echo without interpretation if ECHO is set. */
   int rp = tp->tty_reprint;
@@ -1119,8 +1111,7 @@ int ch;
 /*===========================================================================*
  *				back_over				     *
  *===========================================================================*/
-PRIVATE int back_over(tp)
-register tty_t *tp;
+PRIVATE int back_over(register tty_t *tp)
 {
 /* Backspace to previous character on screen and erase it. */
   u16_t *head;
@@ -1148,8 +1139,8 @@ register tty_t *tp;
 /*===========================================================================*
  *				reprint					     *
  *===========================================================================*/
-PRIVATE void reprint(tp)
-register tty_t *tp;		/* pointer to tty struct */
+/* pointer to tty struct */
+PRIVATE void reprint(register tty_t *tp)
 {
 /* Restore what has been echoed to screen before if the user input has been
  * messed up by output, or if REPRINT (^R) is typed.
@@ -1187,11 +1178,10 @@ register tty_t *tp;		/* pointer to tty struct */
 /*===========================================================================*
  *				out_process				     *
  *===========================================================================*/
-PUBLIC void out_process(tp, bstart, bpos, bend, icount, ocount)
-tty_t *tp;
-char *bstart, *bpos, *bend;	/* start/pos/end of circular buffer */
-int *icount;			/* # input chars / input chars used */
-int *ocount;			/* max output chars / output chars used */
+/* start/pos/end of circular buffer */
+/* # input chars / input chars used */
+/* max output chars / output chars used */
+PUBLIC void out_process(tty_t *tp, char *bstart, char *bpos, char *bend, int *icount, int *ocount)
 {
 /* Perform output processing on a circular buffer.  *icount is the number of
  * bytes to process, and the number of bytes actually processed on return.
@@ -1272,8 +1262,7 @@ out_done:
 /*===========================================================================*
  *				dev_ioctl				     *
  *===========================================================================*/
-PRIVATE void dev_ioctl(tp)
-tty_t *tp;
+PRIVATE void dev_ioctl(tty_t *tp)
 {
 /* The ioctl's TCSETSW, TCSETSF and TCDRAIN wait for output to finish to make
  * sure that an attribute change doesn't affect the processing of current
@@ -1297,8 +1286,7 @@ tty_t *tp;
 /*===========================================================================*
  *				setattr					     *
  *===========================================================================*/
-PRIVATE void setattr(tp)
-tty_t *tp;
+PRIVATE void setattr(tty_t *tp)
 {
 /* Apply the new line attributes (raw/canonical, line speed, etc.) */
   u16_t *inp;
@@ -1350,11 +1338,11 @@ tty_t *tp;
 /*===========================================================================*
  *				tty_reply				     *
  *===========================================================================*/
-PUBLIC void tty_reply(code, replyee, proc_nr, status)
-int code;			/* TASK_REPLY or REVIVE */
-int replyee;			/* destination address for the reply */
-int proc_nr;			/* to whom should the reply go? */
-int status;			/* reply code */
+/* TASK_REPLY or REVIVE */
+/* destination address for the reply */
+/* to whom should the reply go? */
+/* reply code */
+PUBLIC void tty_reply(int code, int replyee, int proc_nr, int status)
 {
 /* Send a reply to a process that wanted to read or write data. */
   message tty_mess;
@@ -1371,9 +1359,8 @@ int status;			/* reply code */
 /*===========================================================================*
  *				sigchar					     *
  *===========================================================================*/
-PUBLIC void sigchar(tp, sig)
-register tty_t *tp;
-int sig;			/* SIGINT, SIGQUIT, SIGKILL or SIGHUP */
+/* SIGINT, SIGQUIT, SIGKILL or SIGHUP */
+PUBLIC void sigchar(register tty_t *tp, int sig)
 {
 /* Process a SIGINT, SIGQUIT or SIGKILL char from the keyboard or SIGHUP from
  * a tty close, "stty 0", or a real RS-232 hangup.  MM will send the signal to
@@ -1398,8 +1385,7 @@ int sig;			/* SIGINT, SIGQUIT, SIGKILL or SIGHUP */
 /*===========================================================================*
  *				tty_icancel				     *
  *===========================================================================*/
-PRIVATE void tty_icancel(tp)
-register tty_t *tp;
+PRIVATE void tty_icancel(register tty_t *tp)
 {
 /* Discard all pending input, tty buffer or device. */
 
@@ -1487,9 +1473,9 @@ PRIVATE void expire_timers(void)
 /*===========================================================================*
  *				settimer				     *
  *===========================================================================*/
-PRIVATE void settimer(tty_ptr, enable)
-tty_t *tty_ptr;			/* line to set or unset a timer on */
-int enable;			/* set timer if true, otherwise unset */
+/* line to set or unset a timer on */
+/* set timer if true, otherwise unset */
+PRIVATE void settimer(tty_t *tty_ptr, int enable)
 {
   clock_t now;				/* current time */
   clock_t exp_time;
@@ -1523,9 +1509,7 @@ int enable;			/* set timer if true, otherwise unset */
 /*===========================================================================*
  *				tty_devnop				     *
  *===========================================================================*/
-PUBLIC int tty_devnop(tp, try)
-tty_t *tp;
-int try;
+PUBLIC int tty_devnop(tty_t *tp, int try)
 {
   /* Some functions need not be implemented at the device level. */
 }
@@ -1533,9 +1517,9 @@ int try;
 /*===========================================================================*
  *				do_select				     *
  *===========================================================================*/
-PRIVATE void do_select(tp, m_ptr)
-register tty_t *tp;		/* pointer to tty struct */
-register message *m_ptr;	/* pointer to message sent to the task */
+/* pointer to tty struct */
+/* pointer to message sent to the task */
+PRIVATE void do_select(register tty_t *tp, register message *m_ptr)
 {
 	int ops, ready_ops = 0, watch;
 

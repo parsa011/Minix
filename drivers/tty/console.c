@@ -134,9 +134,8 @@ FORWARD _PROTOTYPE( int cons_ioctl, (tty_t *tp, int)			);
 /*===========================================================================*
  *				cons_write				     *
  *===========================================================================*/
-PRIVATE int cons_write(tp, try)
-register struct tty *tp;	/* tells which terminal is to be used */
-int try;
+/* tells which terminal is to be used */
+PRIVATE int cons_write(register struct tty *tp, int try)
 {
 /* Copy as much data as possible to the output queue, then start I/O.  On
  * memory-mapped terminals, such as the IBM console, the I/O will also be
@@ -203,9 +202,9 @@ int try;
 /*===========================================================================*
  *				cons_echo				     *
  *===========================================================================*/
-PRIVATE void cons_echo(tp, c)
-register tty_t *tp;		/* pointer to tty struct */
-int c;				/* character to be echoed */
+/* pointer to tty struct */
+/* character to be echoed */
+PRIVATE void cons_echo(register tty_t *tp, int c)
 {
 /* Echo keyboard input (print & flush). */
   console_t *cons = tp->tty_priv;
@@ -217,9 +216,9 @@ int c;				/* character to be echoed */
 /*===========================================================================*
  *				out_char				     *
  *===========================================================================*/
-PRIVATE void out_char(cons, c)
-register console_t *cons;	/* pointer to console struct */
-int c;				/* character to be output */
+/* pointer to console struct */
+/* character to be output */
+PRIVATE void out_char(register console_t *cons, int c)
 {
 /* Output a character on the console.  Check for escape sequences first. */
   if (cons->c_esc_state > 0) {
@@ -303,9 +302,9 @@ int c;				/* character to be output */
 /*===========================================================================*
  *				scroll_screen				     *
  *===========================================================================*/
-PRIVATE void scroll_screen(cons, dir)
-register console_t *cons;	/* pointer to console struct */
-int dir;			/* SCROLL_UP or SCROLL_DOWN */
+/* pointer to console struct */
+/* SCROLL_UP or SCROLL_DOWN */
+PRIVATE void scroll_screen(register console_t *cons, int dir)
 {
   unsigned new_line, new_org, chars;
 
@@ -357,8 +356,8 @@ int dir;			/* SCROLL_UP or SCROLL_DOWN */
 /*===========================================================================*
  *				flush					     *
  *===========================================================================*/
-PRIVATE void flush(cons)
-register console_t *cons;	/* pointer to console struct */
+/* pointer to console struct */
+PRIVATE void flush(register console_t *cons)
 {
 /* Send characters buffered in 'ramqueue' to screen memory, check the new
  * cursor position, compute the new hardware cursor position and set it.
@@ -391,9 +390,9 @@ register console_t *cons;	/* pointer to console struct */
 /*===========================================================================*
  *				parse_escape				     *
  *===========================================================================*/
-PRIVATE void parse_escape(cons, c)
-register console_t *cons;	/* pointer to console struct */
-char c;				/* next character in escape sequence */
+/* pointer to console struct */
+/* next character in escape sequence */
+PRIVATE void parse_escape(register console_t *cons, char c)
 {
 /* The following ANSI escape sequences are currently supported.
  * If n and/or m are omitted, they default to 1.
@@ -450,9 +449,9 @@ char c;				/* next character in escape sequence */
 /*===========================================================================*
  *				do_escape				     *
  *===========================================================================*/
-PRIVATE void do_escape(cons, c)
-register console_t *cons;	/* pointer to console struct */
-char c;				/* next character in escape sequence */
+/* pointer to console struct */
+/* next character in escape sequence */
+PRIVATE void do_escape(register console_t *cons, char c)
 {
   int value, n;
   unsigned src, dst, count;
@@ -692,9 +691,9 @@ char c;				/* next character in escape sequence */
 /*===========================================================================*
  *				set_6845				     *
  *===========================================================================*/
-PRIVATE void set_6845(reg, val)
-int reg;			/* which register pair to set */
-unsigned val;			/* 16-bit value to set it to */
+/* which register pair to set */
+/* 16-bit value to set it to */
+PRIVATE void set_6845(int reg, unsigned val)
 {
 /* Set a register pair inside the 6845.
  * Registers 12-13 tell the 6845 where in video ram to start
@@ -711,9 +710,9 @@ unsigned val;			/* 16-bit value to set it to */
 /*===========================================================================*
  *				get_6845				     *
  *===========================================================================*/
-PRIVATE void get_6845(reg, val)
-int reg;			/* which register pair to set */
-unsigned *val;			/* 16-bit value to set it to */
+/* which register pair to set */
+/* 16-bit value to set it to */
+PRIVATE void get_6845(int reg, unsigned *val)
 {
   char v1, v2;
 /* Get a register pair inside the 6845.  */
@@ -764,8 +763,7 @@ PRIVATE void beep()
 /*===========================================================================*
  *				stop_beep				     *
  *===========================================================================*/
-PRIVATE void stop_beep(tmrp)
-timer_t *tmrp;
+PRIVATE void stop_beep(timer_t *tmrp)
 {
 /* Turn off the beeper by turning off bits 0 and 1 in PORT_B. */
   int port_b_val;
@@ -777,8 +775,7 @@ timer_t *tmrp;
 /*===========================================================================*
  *				scr_init				     *
  *===========================================================================*/
-PUBLIC void scr_init(tp)
-tty_t *tp;
+PUBLIC void scr_init(tty_t *tp)
 {
 /* Initialize the screen driver. */
   console_t *cons;
@@ -873,8 +870,7 @@ tty_t *tp;
 /*===========================================================================*
  *				kputc					     *
  *===========================================================================*/
-PUBLIC void kputc(c)
-int c;
+PUBLIC void kputc(int c)
 {
 	putk(c);
 }
@@ -882,8 +878,7 @@ int c;
 /*===========================================================================*
  *				do_new_kmess				     *
  *===========================================================================*/
-PUBLIC void do_new_kmess(m)
-message *m;
+PUBLIC void do_new_kmess(message *m)
 {
 /* Notification for a new kernel message. */
   struct kmessages kmess;			/* kmessages structure */
@@ -921,8 +916,8 @@ message *m;
 /*===========================================================================*
  *				do_diagnostics				     *
  *===========================================================================*/
-PUBLIC void do_diagnostics(m_ptr)
-message *m_ptr;			/* pointer to request message */
+/* pointer to request message */
+PUBLIC void do_diagnostics(message *m_ptr)
 {
 /* Print a string for a server. */
   char c;
@@ -948,8 +943,8 @@ message *m_ptr;			/* pointer to request message */
 /*===========================================================================*
  *				putk					     *
  *===========================================================================*/
-PRIVATE void putk(c)
-int c;				/* character to print */
+/* character to print */
+PRIVATE void putk(int c)
 {
 /* This procedure is used by the version of printf() that is linked with
  * the TTY driver.  The one in the library sends a message to FS, which is
@@ -1029,8 +1024,7 @@ PUBLIC void select_console(int cons_line)
 /*===========================================================================*
  *				con_loadfont				     *
  *===========================================================================*/
-PUBLIC int con_loadfont(m)
-message *m;
+PUBLIC int con_loadfont(message *m)
 {
 /* Load a font into the EGA or VGA adapter. */
   int result;
@@ -1069,8 +1063,7 @@ message *m;
 /*===========================================================================*
  *				ga_program				     *
  *===========================================================================*/
-PRIVATE int ga_program(seq)
-struct sequence *seq;
+PRIVATE int ga_program(struct sequence *seq)
 {
   pvb_pair_t char_out[14];
   int i;
@@ -1085,9 +1078,7 @@ struct sequence *seq;
 /*===========================================================================*
  *				cons_ioctl				     *
  *===========================================================================*/
-PRIVATE int cons_ioctl(tp, try)
-tty_t *tp;
-int try;
+PRIVATE int cons_ioctl(tty_t *tp, int try)
 {
 /* Set the screen dimensions. */
 

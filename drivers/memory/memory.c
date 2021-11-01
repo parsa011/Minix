@@ -91,8 +91,7 @@ PRIVATE char *m_name()
 /*===========================================================================*
  *				m_prepare				     *
  *===========================================================================*/
-PRIVATE struct device *m_prepare(device)
-int device;
+PRIVATE struct device *m_prepare(int device)
 {
 /* Prepare for I/O on a device: check if the minor device number is ok. */
   if (device < 0 || device >= NR_DEVS) return(NIL_DEV);
@@ -104,12 +103,12 @@ int device;
 /*===========================================================================*
  *				m_transfer				     *
  *===========================================================================*/
-PRIVATE int m_transfer(proc_nr, opcode, position, iov, nr_req)
-int proc_nr;			/* process doing the request */
-int opcode;			/* DEV_GATHER or DEV_SCATTER */
-off_t position;			/* offset on device to read or write */
-iovec_t *iov;			/* pointer to read or write request vector */
-unsigned nr_req;		/* length of request vector */
+/* process doing the request */
+/* DEV_GATHER or DEV_SCATTER */
+/* offset on device to read or write */
+/* pointer to read or write request vector */
+/* length of request vector */
+PRIVATE int m_transfer(int proc_nr, int opcode, off_t position, iovec_t *iov, unsigned nr_req)
 {
 /* Read or write one the driver's minor devices. */
   phys_bytes mem_phys;
@@ -199,9 +198,7 @@ unsigned nr_req;		/* length of request vector */
 /*===========================================================================*
  *				m_do_open				     *
  *===========================================================================*/
-PRIVATE int m_do_open(dp, m_ptr)
-struct driver *dp;
-message *m_ptr;
+PRIVATE int m_do_open(struct driver *dp, message *m_ptr)
 {
 /* Check device number on open.  (This used to give I/O privileges to a 
  * process opening /dev/mem or /dev/kmem. This may be needed in case of 
@@ -261,9 +258,9 @@ PRIVATE void m_init()
 /*===========================================================================*
  *				m_ioctl					     *
  *===========================================================================*/
-PRIVATE int m_ioctl(dp, m_ptr)
-struct driver *dp;			/* pointer to driver structure */
-message *m_ptr;				/* pointer to control message */
+/* pointer to driver structure */
+/* pointer to control message */
+PRIVATE int m_ioctl(struct driver *dp, message *m_ptr)
 {
 /* I/O controls for the memory driver. Currently there is one I/O control:
  * - MIOCRAMSIZE: to set the size of the RAM disk.
@@ -308,8 +305,7 @@ message *m_ptr;				/* pointer to control message */
 /*===========================================================================*
  *				m_geometry				     *
  *===========================================================================*/
-PRIVATE void m_geometry(entry)
-struct partition *entry;
+PRIVATE void m_geometry(struct partition *entry)
 {
   /* Memory devices don't have a geometry, but the outside world insists. */
   entry->cylinders = div64u(m_geom[m_device].dv_size, SECTOR_SIZE) / (64 * 32);

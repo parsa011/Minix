@@ -89,8 +89,7 @@ PRIVATE char *log_name()
 /*===========================================================================*
  *				log_prepare				     *
  *===========================================================================*/
-PRIVATE struct device *log_prepare(device)
-int device;
+PRIVATE struct device *log_prepare(int device)
 {
 /* Prepare for I/O on a device: check if the minor device number is ok. */
 
@@ -207,12 +206,12 @@ subread(struct logdevice *log, int count, int proc_nr, vir_bytes user_vir)
 /*===========================================================================*
  *				log_transfer				     *
  *===========================================================================*/
-PRIVATE int log_transfer(proc_nr, opcode, position, iov, nr_req)
-int proc_nr;			/* process doing the request */
-int opcode;			/* DEV_GATHER or DEV_SCATTER */
-off_t position;			/* offset on device to read or write */
-iovec_t *iov;			/* pointer to read or write request vector */
-unsigned nr_req;		/* length of request vector */
+‍/* process doing the request */
+/* DEV_GATHER or DEV_SCATTER */
+‍/* offset on device to read or write */
+/* pointer to read or write request vector */
+‍/* length of request vector */
+PRIVATE int log_transfer(int proc_nr, int opcode, off_t position, iovec_t *iov, unsigned nr_req)
 {
 /* Read or write one the driver's minor devices. */
   unsigned count;
@@ -289,9 +288,7 @@ unsigned nr_req;		/* length of request vector */
 /*============================================================================*
  *				log_do_open				      *
  *============================================================================*/
-PRIVATE int log_do_open(dp, m_ptr)
-struct driver *dp;
-message *m_ptr;
+PRIVATE int log_do_open(struct driver *dp, message *m_ptr)
 {
   if (log_prepare(m_ptr->DEVICE) == NIL_DEV) return(ENXIO);
   return(OK);
@@ -300,8 +297,7 @@ message *m_ptr;
 /*============================================================================*
  *				log_geometry				      *
  *============================================================================*/
-PRIVATE void log_geometry(entry)
-struct partition *entry;
+PRIVATE void log_geometry(struct partition *entry)
 {
   /* take a page from the fake memory device geometry */
   entry->heads = 64;
@@ -313,9 +309,7 @@ struct partition *entry;
 /*============================================================================*
  *				log_cancel				      *
  *============================================================================*/
-PRIVATE int log_cancel(dp, m_ptr)
-struct driver *dp;
-message *m_ptr;
+PRIVATE int log_cancel(struct driver *dp, message *m_ptr)
 {
   int d;
   d = m_ptr->TTY_LINE;
@@ -386,9 +380,7 @@ PRIVATE void do_status(message *m_ptr)
 /*============================================================================*
  *				log_signal				      *
  *============================================================================*/
-PRIVATE void log_signal(dp, m_ptr)
-struct driver *dp;
-message *m_ptr;
+PRIVATE void log_signal(struct driver *dp, message *m_ptr)
 {
   sigset_t sigset = m_ptr->NOTIFY_ARG;
   if (sigismember(&sigset, SIGKMESS)) {
@@ -400,9 +392,7 @@ message *m_ptr;
 /*============================================================================*
  *				log_other				      *
  *============================================================================*/
-PRIVATE int log_other(dp, m_ptr)
-struct driver *dp;
-message *m_ptr;
+PRIVATE int log_other(struct driver *dp, message *m_ptr)
 {
 	int r;
 
@@ -429,9 +419,7 @@ message *m_ptr;
 /*============================================================================*
  *				log_select				      *
  *============================================================================*/
-PRIVATE int log_select(dp, m_ptr)
-struct driver *dp;
-message *m_ptr;
+PRIVATE int log_select(struct driver *dp, message *m_ptr)
 {
   int d, ready_ops = 0, ops = 0;
   d = m_ptr->TTY_LINE;

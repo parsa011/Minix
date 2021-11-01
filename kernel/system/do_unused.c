@@ -7,8 +7,8 @@
 /*===========================================================================*
  *			          do_unused				     *
  *===========================================================================*/
-PUBLIC int do_unused(m)
-message *m;				/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_unused(message *m)
 {
   kprintf("SYSTEM: got unused request %d from %d", m->m_type, m->m_source);
   return(EBADREQUEST);			/* illegal message type */

@@ -14,8 +14,8 @@
 /*===========================================================================*
  *			      do_endksig				     *
  *===========================================================================*/
-PUBLIC int do_endksig(m_ptr)
-message *m_ptr;			/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_endksig(message *m_ptr)
 {
 /* Finish up after a kernel type signal, caused by a SYS_KILL message or a 
  * call to cause_sig by a task. This is called by the PM after processing a

@@ -18,8 +18,8 @@
 /*===========================================================================*
  *			      do_sigsend				     *
  *===========================================================================*/
-PUBLIC int do_sigsend(m_ptr)
-message *m_ptr;			/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_sigsend(message *m_ptr)
 {
 /* Handle sys_sigsend, POSIX-style signal handling. */
 

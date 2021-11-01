@@ -16,8 +16,8 @@
 /*===========================================================================*
  *				do_privctl				     *
  *===========================================================================*/
-PUBLIC int do_privctl(m_ptr)
-message *m_ptr;			/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_privctl(message *m_ptr)
 {
 /* Handle sys_privctl(). Update a process' privileges. If the process is not
  * yet a system process, make sure it gets its own privilege structure.

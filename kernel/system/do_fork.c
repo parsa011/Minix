@@ -17,8 +17,8 @@
 /*===========================================================================*
  *				do_fork					     *
  *===========================================================================*/
-PUBLIC int do_fork(m_ptr)
-register message *m_ptr;	/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_fork(register message *m_ptr)
 {
 /* Handle sys_fork().  PR_PPROC_NR has forked.  The child is PR_PROC_NR. */
 #if (CHIP == INTEL)

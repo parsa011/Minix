@@ -22,8 +22,8 @@ PRIVATE pvl_pair_t *pvl = (pvl_pair_t *) vdevio_buf;
 /*===========================================================================*
  *			        do_vdevio                                    *
  *===========================================================================*/
-PUBLIC int do_vdevio(m_ptr)
-register message *m_ptr;	/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_vdevio(register message *m_ptr)
 {
 /* Perform a series of device I/O on behalf of a non-kernel process. The 
  * I/O addresses and I/O values are fetched from and returned to some buffer

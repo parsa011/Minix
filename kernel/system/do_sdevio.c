@@ -18,8 +18,8 @@
 /*===========================================================================*
  *			        do_sdevio                                    *
  *===========================================================================*/
-PUBLIC int do_sdevio(m_ptr)
-register message *m_ptr;	/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_sdevio(register message *m_ptr)
 {
   int proc_nr = m_ptr->DIO_VEC_PROC;
   int count = m_ptr->DIO_VEC_SIZE;

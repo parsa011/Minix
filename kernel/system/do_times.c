@@ -15,8 +15,8 @@
 /*===========================================================================*
  *				do_times				     *
  *===========================================================================*/
-PUBLIC int do_times(m_ptr)
-register message *m_ptr;	/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_times(register message *m_ptr)
 {
 /* Handle sys_times().  Retrieve the accounting information. */
   register struct proc *rp;

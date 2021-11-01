@@ -18,8 +18,8 @@ PRIVATE struct vir_cp_req vir_cp_req[VCOPY_VEC_SIZE];
 /*===========================================================================*
  *				do_vcopy					     *
  *===========================================================================*/
-PUBLIC int do_vcopy(m_ptr)
-register message *m_ptr;	/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_vcopy(register message *m_ptr)
 {
 /* Handle sys_virvcopy() and sys_physvcopy() that pass a vector with copy
  * requests. Although a single handler function is used, there are two

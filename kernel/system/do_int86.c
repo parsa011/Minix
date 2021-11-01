@@ -14,8 +14,8 @@ struct reg86u reg86;
 /*===========================================================================*
  *				do_int86					     *
  *===========================================================================*/
-PUBLIC int do_int86(m_ptr)
-register message *m_ptr;	/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_int86(register message *m_ptr)
 {
   int caller;
   vir_bytes caller_vir;

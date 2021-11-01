@@ -12,8 +12,8 @@
 /*===========================================================================*
  *				do_newmap				     *
  *===========================================================================*/
-PUBLIC int do_newmap(m_ptr)
-message *m_ptr;			/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_newmap(message *m_ptr)
 {
 /* Handle sys_newmap().  Fetch the memory map from PM. */
   register struct proc *rp;	/* process whose map is to be loaded */

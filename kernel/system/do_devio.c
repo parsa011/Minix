@@ -16,8 +16,8 @@
 /*===========================================================================*
  *			        do_devio                                     *
  *===========================================================================*/
-PUBLIC int do_devio(m_ptr)
-register message *m_ptr;	/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_devio(register message *m_ptr)
 {
 /* Process a single I/O request for byte, word, and long values. */
     if (m_ptr->DIO_REQUEST == DIO_INPUT) { 

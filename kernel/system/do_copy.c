@@ -19,8 +19,8 @@
 /*===========================================================================*
  *				do_copy					     *
  *===========================================================================*/
-PUBLIC int do_copy(m_ptr)
-register message *m_ptr;	/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_copy(register message *m_ptr)
 {
 /* Handle sys_vircopy() and sys_physcopy().  Copy data using virtual or
  * physical addressing. Although a single handler function is used, there 

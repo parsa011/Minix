@@ -16,8 +16,8 @@ FORWARD _PROTOTYPE( void cause_alarm, (timer_t *tp) );
 /*===========================================================================*
  *				do_setalarm				     *
  *===========================================================================*/
-PUBLIC int do_setalarm(m_ptr)
-message *m_ptr;			/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_setalarm(message *m_ptr)
 {
 /* A process requests a synchronous alarm, or wants to cancel its alarm. */
   register struct proc *rp;	/* pointer to requesting process */

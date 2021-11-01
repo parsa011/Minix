@@ -14,8 +14,7 @@
 /*===========================================================================*
  *				do_memset				     *
  *===========================================================================*/
-PUBLIC int do_memset(m_ptr)
-register message *m_ptr;
+PUBLIC int do_memset(register message *m_ptr)
 {
 /* Handle sys_memset(). This writes a pattern into the specified memory. */
   unsigned long p;

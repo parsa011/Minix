@@ -19,8 +19,8 @@ static vir_bytes bios_buf_vir, bios_buf_len;
 /*===========================================================================*
  *			        do_getinfo				     *
  *===========================================================================*/
-PUBLIC int do_getinfo(m_ptr)
-register message *m_ptr;	/* pointer to request message */
+/* pointer to request message */
+PUBLIC int do_getinfo(register message *m_ptr)
 {
 /* Request system information to be copied to caller's address space. This
  * call simply copies entire data structures to the caller.

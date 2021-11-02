@@ -27,9 +27,7 @@ FORWARD _PROTOTYPE(void kputc, (int c));
 /*===========================================================================*
  *				panic                                        *
  *===========================================================================*/
-PUBLIC void panic(mess,nr)
-_CONST char *mess;
-int nr;
+PUBLIC void panic(_CONST char *mess,int nr)
 {
 /* The system has run aground of a fatal kernel error. Terminate execution. */
   static int panicking = 0;
@@ -123,8 +121,8 @@ PUBLIC void kprintf(const char *fmt, ...) 	/* format to be printed */
 /*===========================================================================*
  *				kputc				     	     *
  *===========================================================================*/
-PRIVATE void kputc(c)
-int c;					/* character to append */
+/* character to append */
+PRIVATE void kputc(int c)
 {
 /* Accumulate a single character for a kernel message. Send a notification
  * to the output driver if an END_OF_KMESS is encountered. 

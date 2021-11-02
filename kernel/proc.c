@@ -78,10 +78,10 @@ FORWARD _PROTOTYPE( void pick_proc, (void) );
 /*===========================================================================*
  *				sys_call				     * 
  *===========================================================================*/
-PUBLIC int sys_call(call_nr, src_dst, m_ptr)
-int call_nr;			/* system call number and flags */
-int src_dst;			/* src to receive from or dst to send to */
-message *m_ptr;			/* pointer to message in the caller's space */
+/* system call number and flags */
+/* src to receive from or dst to send to */
+/* pointer to message in the caller's space */
+PUBLIC int sys_call(int call_nr, int src_dst, message *m_ptr)
 {
 /* System calls are done by trapping to the kernel with an INT instruction.
  * The trap is caught and sys_call() is called to send or receive a message
@@ -157,29 +157,29 @@ message *m_ptr;			/* pointer to message in the caller's space */
    *   - ECHO:    nonblocking call; directly echo back the message 
    */
   switch(function) {
-  case SENDREC:
-      /* A flag is set so that notifications cannot interrupt SENDREC. */
-      priv(caller_ptr)->s_flags |= SENDREC_BUSY;
-      /* fall through */
-  case SEND:			
-      result = mini_send(caller_ptr, src_dst, m_ptr, flags);
-      if (function == SEND || result != OK) {	
-          break;				/* done, or SEND failed */
-      }						/* fall through for SENDREC */
-  case RECEIVE:			
-      if (function == RECEIVE)
-          priv(caller_ptr)->s_flags &= ~SENDREC_BUSY;
-      result = mini_receive(caller_ptr, src_dst, m_ptr, flags);
-      break;
-  case NOTIFY:
-      result = mini_notify(caller_ptr, src_dst);
-      break;
-  case ECHO:
-      CopyMess(caller_ptr->p_nr, caller_ptr, m_ptr, caller_ptr, m_ptr);
-      result = OK;
-      break;
-  default:
-      result = EBADCALL;			/* illegal system call */
+    case SENDREC:
+        /* A flag is set so that notifications cannot interrupt SENDREC. */
+        priv(caller_ptr)->s_flags |= SENDREC_BUSY;
+        /* fall through */
+    case SEND:			
+        result = mini_send(caller_ptr, src_dst, m_ptr, flags);
+        if (function == SEND || result != OK) {	
+            break;				/* done, or SEND failed */
+        }						/* fall through for SENDREC */
+    case RECEIVE:			
+        if (function == RECEIVE)
+            priv(caller_ptr)->s_flags &= ~SENDREC_BUSY;
+        result = mini_receive(caller_ptr, src_dst, m_ptr, flags);
+        break;
+    case NOTIFY:
+        result = mini_notify(caller_ptr, src_dst);
+        break;
+    case ECHO:
+        CopyMess(caller_ptr->p_nr, caller_ptr, m_ptr, caller_ptr, m_ptr);
+        result = OK;
+        break;
+    default:
+        result = EBADCALL;			/* illegal system call */
   }
 
   /* Now, return the result of the system call to the caller. */
@@ -189,11 +189,11 @@ message *m_ptr;			/* pointer to message in the caller's space */
 /*===========================================================================*
  *				mini_send				     * 
  *===========================================================================*/
-PRIVATE int mini_send(caller_ptr, dst, m_ptr, flags)
-register struct proc *caller_ptr;	/* who is trying to send a message? */
-int dst;				/* to whom is message being sent? */
-message *m_ptr;				/* pointer to message buffer */
-unsigned flags;				/* system call flags */
+/* who is trying to send a message? */
+/* to whom is message being sent? */
+/* pointer to message buffer */
+/* system call flags */
+PRIVATE int mini_send(register struct proc *caller_ptr, int dst, message *m_ptr, unsigned flags)
 {
 /* Send a message from 'caller_ptr' to 'dst'. If 'dst' is blocked waiting
  * for this message, copy the message to it and unblock 'dst'. If 'dst' is
@@ -240,11 +240,11 @@ unsigned flags;				/* system call flags */
 /*===========================================================================*
  *				mini_receive				     * 
  *===========================================================================*/
-PRIVATE int mini_receive(caller_ptr, src, m_ptr, flags)
-register struct proc *caller_ptr;	/* process trying to get message */
-int src;				/* which message source is wanted */
-message *m_ptr;				/* pointer to message buffer */
-unsigned flags;				/* system call flags */
+/* process trying to get message */
+/* which message source is wanted */
+/* pointer to message buffer */
+/* system call flags */
+PRIVATE int mini_receive(register struct proc *caller_ptr, int src, message *m_ptr, unsigned flags)
 {
 /* A process or task wants to get a message.  If a message is already queued,
  * acquire it and deblock the sender.  If no message from the desired source
@@ -317,9 +317,9 @@ unsigned flags;				/* system call flags */
 /*===========================================================================*
  *				mini_notify				     * 
  *===========================================================================*/
-PRIVATE int mini_notify(caller_ptr, dst)
-register struct proc *caller_ptr;	/* sender of the notification */
-int dst;				/* which process to notify */
+/* sender of the notification */
+/* which process to notify */
+PRIVATE int mini_notify(register struct proc *caller_ptr, int dst)
 {
   register struct proc *dst_ptr = proc_addr(dst);
   int src_id;				/* source id for late delivery */
@@ -356,9 +356,9 @@ int dst;				/* which process to notify */
 /*===========================================================================*
  *				lock_notify				     *
  *===========================================================================*/
-PUBLIC int lock_notify(src, dst)
-int src;			/* sender of the notification */
-int dst;			/* who is to be notified */
+/* sender of the notification */
+/* who is to be notified */
+PUBLIC int lock_notify(int src, int dst)
 {
 /* Safe gateway to mini_notify() for tasks and interrupt handlers. The sender
  * is explicitly given to prevent confusion where the call comes from. MINIX 
@@ -385,8 +385,8 @@ int dst;			/* who is to be notified */
 /*===========================================================================*
  *				enqueue					     * 
  *===========================================================================*/
-PRIVATE void enqueue(rp)
-register struct proc *rp;	/* this process is now runnable */
+/* this process is now runnable */
+PRIVATE void enqueue(register struct proc *rp)
 {
 /* Add 'rp' to one of the queues of runnable processes.  This function is 
  * responsible for inserting a process into one of the scheduling queues. 
@@ -421,8 +421,8 @@ register struct proc *rp;	/* this process is now runnable */
 /*===========================================================================*
  *				dequeue					     * 
  *===========================================================================*/
-PRIVATE void dequeue(rp)
-register struct proc *rp;	/* this process is no longer runnable */
+/* this process is no longer runnable */
+PRIVATE void dequeue(register struct proc *rp)
 {
 /* A process must be removed from the scheduling queues, for example, because
  * it has blocked.  If the currently active process is removed, a new process
@@ -460,10 +460,10 @@ register struct proc *rp;	/* this process is no longer runnable */
 /*===========================================================================*
  *				sched					     * 
  *===========================================================================*/
-PRIVATE void sched(rp, queue, front)
-register struct proc *rp;			/* process to be scheduled */
-int *queue;					/* return: queue to use */
-int *front;					/* return: front or back */
+/* process to be scheduled */
+/* return: queue to use */
+/* return: front or back */
+PRIVATE void sched(register struct proc *rp, int *queue, int *front)
 {
 /* This function determines the scheduling policy.  It is called whenever a
  * process must be added to one of the scheduling queues to decide where to
@@ -534,9 +534,9 @@ PRIVATE void pick_proc()
 /*===========================================================================*
  *				lock_send				     *
  *===========================================================================*/
-PUBLIC int lock_send(dst, m_ptr)
-int dst;			/* to whom is message being sent? */
-message *m_ptr;			/* pointer to message buffer */
+/* to whom is message being sent? */
+/* pointer to message buffer */
+PUBLIC int lock_send(int dst, message *m_ptr)
 {
 /* Safe gateway to mini_send() for tasks. */
   int result;
@@ -549,8 +549,8 @@ message *m_ptr;			/* pointer to message buffer */
 /*===========================================================================*
  *				lock_enqueue				     *
  *===========================================================================*/
-PUBLIC void lock_enqueue(rp)
-struct proc *rp;		/* this process is now runnable */
+/* this process is now runnable */
+PUBLIC void lock_enqueue(struct proc *rp)
 {
 /* Safe gateway to enqueue() for tasks. */
   lock(3, "enqueue");
@@ -561,8 +561,8 @@ struct proc *rp;		/* this process is now runnable */
 /*===========================================================================*
  *				lock_dequeue				     *
  *===========================================================================*/
-PUBLIC void lock_dequeue(rp)
-struct proc *rp;		/* this process is no longer runnable */
+/* this process is no longer runnable */
+PUBLIC void lock_dequeue(struct proc *rp)
 {
 /* Safe gateway to dequeue() for tasks. */
   lock(4, "dequeue");

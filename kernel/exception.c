@@ -10,8 +10,7 @@
 /*===========================================================================*
  *				exception				     *
  *===========================================================================*/
-PUBLIC void exception(vec_nr)
-unsigned vec_nr;
+PUBLIC void exception(unsigned vec_nr)
 {
 /* An exception or unexpected interrupt has occurred. */
 

@@ -175,11 +175,7 @@ PUBLIC void prot_init()
 /*===========================================================================*
  *				init_codeseg				     *
  *===========================================================================*/
-PUBLIC void init_codeseg(segdp, base, size, privilege)
-register struct segdesc_s *segdp;
-phys_bytes base;
-vir_bytes size;
-int privilege;
+PUBLIC void init_codeseg(register struct segdesc_s *segdp, phys_bytes base, vir_bytes size, int privilege)
 {
 /* Build descriptor for a code segment. */
   sdesc(segdp, base, size);
@@ -191,11 +187,7 @@ int privilege;
 /*===========================================================================*
  *				init_dataseg				     *
  *===========================================================================*/
-PUBLIC void init_dataseg(segdp, base, size, privilege)
-register struct segdesc_s *segdp;
-phys_bytes base;
-vir_bytes size;
-int privilege;
+PUBLIC void init_dataseg(register struct segdesc_s *segdp, phys_bytes base, vir_bytes size, int privilege)
 {
 /* Build descriptor for a data segment. */
   sdesc(segdp, base, size);
@@ -206,10 +198,7 @@ int privilege;
 /*===========================================================================*
  *				sdesc					     *
  *===========================================================================*/
-PRIVATE void sdesc(segdp, base, size)
-register struct segdesc_s *segdp;
-phys_bytes base;
-vir_bytes size;
+PRIVATE void sdesc(register struct segdesc_s *segdp, phys_bytes base, vir_bytes size)
 {
 /* Fill in the size fields (base, limit and granularity) of a descriptor. */
   segdp->base_low = base;
@@ -218,12 +207,12 @@ vir_bytes size;
 
   --size;			/* convert to a limit, 0 size means 4G */
   if (size > BYTE_GRAN_MAX) {
-	segdp->limit_low = size >> PAGE_GRAN_SHIFT;
-	segdp->granularity = GRANULAR | (size >>
-				     (PAGE_GRAN_SHIFT + GRANULARITY_SHIFT));
+    segdp->limit_low = size >> PAGE_GRAN_SHIFT;
+    segdp->granularity = GRANULAR | (size >>
+              (PAGE_GRAN_SHIFT + GRANULARITY_SHIFT));
   } else {
-	segdp->limit_low = size;
-	segdp->granularity = size >> GRANULARITY_SHIFT;
+    segdp->limit_low = size;
+    segdp->granularity = size >> GRANULARITY_SHIFT;
   }
   segdp->granularity |= DEFAULT;	/* means BIG for data seg */
 }
@@ -231,8 +220,7 @@ vir_bytes size;
 /*===========================================================================*
  *				seg2phys				     *
  *===========================================================================*/
-PUBLIC phys_bytes seg2phys(seg)
-U16_t seg;
+PUBLIC phys_bytes seg2phys(U16_t seg)
 {
 /* Return the base address of a segment, with seg being either a 8086 segment
  * register, or a 286/386 segment selector.
@@ -241,12 +229,12 @@ U16_t seg;
   struct segdesc_s *segdp;
 
   if (! machine.protected) {
-	base = hclick_to_physb(seg);
+	  base = hclick_to_physb(seg);
   } else {
-	segdp = &gdt[seg >> 3];
-	base =    ((u32_t) segdp->base_low << 0)
-		| ((u32_t) segdp->base_middle << 16)
-		| ((u32_t) segdp->base_high << 24);
+    segdp = &gdt[seg >> 3];
+    base =    ((u32_t) segdp->base_low << 0)
+      | ((u32_t) segdp->base_middle << 16)
+      | ((u32_t) segdp->base_high << 24);
   }
   return base;
 }
@@ -254,10 +242,7 @@ U16_t seg;
 /*===========================================================================*
  *				phys2seg				     *
  *===========================================================================*/
-PUBLIC void phys2seg(seg, off, phys)
-u16_t *seg;
-vir_bytes *off;
-phys_bytes phys;
+PUBLIC void phys2seg(u16_t *seg, vir_bytes *off, phys_bytes phys)
 {
 /* Return a segment selector and offset that can be used to reach a physical
  * address, for use by a driver doing memory I/O in the A0000 - DFFFF range.
@@ -269,10 +254,7 @@ phys_bytes phys;
 /*===========================================================================*
  *				int_gate				     *
  *===========================================================================*/
-PRIVATE void int_gate(vec_nr, offset, dpl_type)
-unsigned vec_nr;
-vir_bytes offset;
-unsigned dpl_type;
+PRIVATE void int_gate(unsigned vec_nr, vir_bytes offset, unsigned dpl_type)
 {
 /* Build descriptor for an interrupt gate. */
   register struct gatedesc_s *idp;
@@ -287,8 +269,7 @@ unsigned dpl_type;
 /*===========================================================================*
  *				enable_iop				     * 
  *===========================================================================*/
-PUBLIC void enable_iop(pp)
-struct proc *pp;
+PUBLIC void enable_iop(struct proc *pp)
 {
 /* Allow a user process to use I/O instructions.  Change the I/O Permission
  * Level bits in the psw. These specify least-privileged Current Permission
@@ -301,8 +282,7 @@ struct proc *pp;
 /*===========================================================================*
  *				alloc_segments				     *
  *===========================================================================*/
-PUBLIC void alloc_segments(rp)
-register struct proc *rp;
+PUBLIC void alloc_segments(register struct proc *rp)
 {
 /* This is called at system initialization from main() and by do_newmap(). 
  * The code has a separate function because of all hardware-dependencies.
@@ -339,4 +319,3 @@ register struct proc *rp;
       rp->p_reg.ds = click_to_hclick(rp->p_memmap[D].mem_phys);
   }
 }
-

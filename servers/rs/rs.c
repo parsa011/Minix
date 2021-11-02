@@ -102,7 +102,6 @@ PRIVATE void init_server(void)
   if (sigaction(SIGHUP,  &sa, NULL)<0) panic("RS","sigaction failed", errno);
 }
 
-
 /*===========================================================================*
  *				get_work                                     *
  *===========================================================================*/
@@ -115,7 +114,6 @@ PRIVATE void get_work()
     who = m_in.m_source;        /* message arrived! set sender */
     callnr = m_in.m_type;       /* set function call number */
 }
-
 
 /*===========================================================================*
  *				reply					     *
@@ -130,6 +128,3 @@ int result;                           	/* report result to replyee */
     if (OK != send_status)
         panic("RS", "unable to send reply!", send_status);
 }
-
-
-

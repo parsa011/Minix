@@ -95,8 +95,8 @@ PUBLIC void clock_task()
 /*===========================================================================*
  *				do_clocktick				     *
  *===========================================================================*/
-PRIVATE int do_clocktick(m_ptr)
-message *m_ptr;				/* pointer to request message */
+/* pointer to request message */
+PRIVATE int do_clocktick(message *m_ptr)
 {
 /* Despite its name, this routine is not called on every clock tick. It
  * is called on those clock ticks when a lot of work needs to be done.
@@ -154,8 +154,7 @@ PUBLIC void clock_stop()
 /*===========================================================================*
  *				clock_handler				     *
  *===========================================================================*/
-PRIVATE int clock_handler(hook)
-irq_hook_t *hook;
+PRIVATE int clock_handler(irq_hook_t *hook)
 {
 /* This executes on each clock tick (i.e., every time the timer chip generates 
  * an interrupt). It does a little bit of work so the clock task does not have 
@@ -227,10 +226,10 @@ PUBLIC clock_t get_uptime()
 /*===========================================================================*
  *				set_timer				     *
  *===========================================================================*/
-PUBLIC void set_timer(tp, exp_time, watchdog)
-struct timer *tp;		/* pointer to timer structure */
-clock_t exp_time;		/* expiration realtime */
-tmr_func_t watchdog;		/* watchdog to be called */
+/* pointer to timer structure */
+/* expiration realtime */
+/* watchdog to be called */
+PUBLIC void set_timer(struct timer *tp, clock_t exp_time, tmr_func_t watchdog)
 {
 /* Insert the new timer in the active timers list. Always update the 
  * next timeout time by setting it to the front of the active list.
@@ -242,8 +241,8 @@ tmr_func_t watchdog;		/* watchdog to be called */
 /*===========================================================================*
  *				reset_timer				     *
  *===========================================================================*/
-PUBLIC void reset_timer(tp)
-struct timer *tp;		/* pointer to timer structure */
+/* pointer to timer structure */
+PUBLIC void reset_timer(struct timer *tp)
 {
 /* The timer pointed to by 'tp' is no longer needed. Remove it from both the
  * active and expired lists. Always update the next timeout time by setting

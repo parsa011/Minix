@@ -139,5 +139,3 @@ PUBLIC int do_exit(message *m_ptr)
   }
   return(OK);
 }
-
-

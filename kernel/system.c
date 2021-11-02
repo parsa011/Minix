@@ -170,9 +170,9 @@ PRIVATE void initialize(void)
 /*===========================================================================*
  *				get_priv				     *
  *===========================================================================*/
-PUBLIC int get_priv(rc, proc_type)
-register struct proc *rc;		/* new (child) process pointer */
-int proc_type;				/* system or user process flag */
+/* new (child) process pointer */
+/* system or user process flag */
+PUBLIC int get_priv(register struct proc *rc, int proc_type)
 {
 /* Get a privilege structure. All user processes share the same privilege 
  * structure. System processes get their own privilege structure. 
@@ -197,8 +197,7 @@ int proc_type;				/* system or user process flag */
 /*===========================================================================*
  *				get_randomness				     *
  *===========================================================================*/
-PUBLIC void get_randomness(source)
-int source;
+PUBLIC void get_randomness(int source)
 {
 /* On machines with the RDTSC (cycle counter read instruction - pentium
  * and up), use that for high-resolution raw entropy gathering. Otherwise,
@@ -229,9 +228,9 @@ int source;
 /*===========================================================================*
  *				send_sig				     *
  *===========================================================================*/
-PUBLIC void send_sig(proc_nr, sig_nr)
-int proc_nr;			/* system process to be signalled */
-int sig_nr;			/* signal to be sent, 1 to _NSIG */
+/* system process to be signalled */
+/* signal to be sent, 1 to _NSIG */
+PUBLIC void send_sig(int proc_nr, int sig_nr)
 {
 /* Notify a system process about a signal. This is straightforward. Simply
  * set the signal that is to be delivered in the pending signals map and 
@@ -247,9 +246,9 @@ int sig_nr;			/* signal to be sent, 1 to _NSIG */
 /*===========================================================================*
  *				cause_sig				     *
  *===========================================================================*/
-PUBLIC void cause_sig(proc_nr, sig_nr)
-int proc_nr;			/* process to be signalled */
-int sig_nr;			/* signal to be sent, 1 to _NSIG */
+/* process to be signalled */
+/* signal to be sent, 1 to _NSIG */
+PUBLIC void cause_sig(int proc_nr, int sig_nr)
 {
 /* A system process wants to send a signal to a process.  Examples are:
  *  - HARDWARE wanting to cause a SIGSEGV after a CPU exception
@@ -281,11 +280,11 @@ int sig_nr;			/* signal to be sent, 1 to _NSIG */
 /*===========================================================================*
  *				umap_local				     *
  *===========================================================================*/
-PUBLIC phys_bytes umap_local(rp, seg, vir_addr, bytes)
-register struct proc *rp;	/* pointer to proc table entry for process */
-int seg;			/* T, D, or S segment */
-vir_bytes vir_addr;		/* virtual address in bytes within the seg */
-vir_bytes bytes;		/* # of bytes to be copied */
+/* pointer to proc table entry for process */
+/* T, D, or S segment */
+/* virtual address in bytes within the seg */
+/* # of bytes to be copied */
+PUBLIC phys_bytes umap_local(register struct proc *rp, int seg, vir_bytes vir_addr, vir_bytes bytes)
 {
 /* Calculate the physical memory address for a given virtual address. */
   vir_clicks vc;		/* the virtual address in clicks */
@@ -323,11 +322,11 @@ vir_bytes bytes;		/* # of bytes to be copied */
 /*===========================================================================*
  *				umap_remote				     *
  *===========================================================================*/
-PUBLIC phys_bytes umap_remote(rp, seg, vir_addr, bytes)
-register struct proc *rp;	/* pointer to proc table entry for process */
-int seg;			/* index of remote segment */
-vir_bytes vir_addr;		/* virtual address in bytes within the seg */
-vir_bytes bytes;		/* # of bytes to be copied */
+/* pointer to proc table entry for process */
+/* index of remote segment */
+/* virtual address in bytes within the seg */
+/* # of bytes to be copied */
+PUBLIC phys_bytes umap_remote(register struct proc *rp, int seg, vir_bytes vir_addr, vir_bytes bytes)
 {
 /* Calculate the physical memory address for a given virtual address. */
   struct far_mem *fm;
@@ -345,10 +344,10 @@ vir_bytes bytes;		/* # of bytes to be copied */
 /*===========================================================================*
  *				umap_bios				     *
  *===========================================================================*/
-PUBLIC phys_bytes umap_bios(rp, vir_addr, bytes)
-register struct proc *rp;	/* pointer to proc table entry for process */
-vir_bytes vir_addr;		/* virtual address in BIOS segment */
-vir_bytes bytes;		/* # of bytes to be copied */
+/* pointer to proc table entry for process */
+/* virtual address in BIOS segment */
+/* # of bytes to be copied */
+PUBLIC phys_bytes umap_bios(register struct proc *rp, vir_bytes vir_addr, vir_bytes bytes)
 {
 /* Calculate the physical memory address at the BIOS. Note: currently, BIOS
  * address zero (the first BIOS interrupt vector) is not considered as an 
@@ -369,10 +368,10 @@ vir_bytes bytes;		/* # of bytes to be copied */
 /*===========================================================================*
  *				virtual_copy				     *
  *===========================================================================*/
-PUBLIC int virtual_copy(src_addr, dst_addr, bytes)
-struct vir_addr *src_addr;	/* source virtual address */
-struct vir_addr *dst_addr;	/* destination virtual address */
-vir_bytes bytes;		/* # of bytes to copy  */
+/* source virtual address */
+/* destination virtual address */
+/* # of bytes to copy  */
+PUBLIC int virtual_copy(struct vir_addr *src_addr, struct vir_addr *dst_addr, vir_bytes bytes)
 {
 /* Copy bytes from virtual address src_addr to virtual address dst_addr. 
  * Virtual addresses can be in ABS, LOCAL_SEG, REMOTE_SEG, or BIOS_SEG.
@@ -422,4 +421,3 @@ vir_bytes bytes;		/* # of bytes to copy  */
   phys_copy(phys_addr[_SRC_], phys_addr[_DST_], (phys_bytes) bytes);
   return(OK);
 }
-

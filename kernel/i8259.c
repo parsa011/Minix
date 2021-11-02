@@ -22,48 +22,44 @@
 /*===========================================================================*
  *				intr_init				     *
  *===========================================================================*/
-PUBLIC void intr_init(mine)
-int mine;
+PUBLIC void intr_init(int mine)
 {
 /* Initialize the 8259s, finishing with all interrupts disabled.  This is
  * only done in protected mode, in real mode we don't touch the 8259s, but
  * use the BIOS locations instead.  The flag "mine" is set if the 8259s are
  * to be programmed for MINIX, or to be reset to what the BIOS expects.
  */
-  int i;
+    int i;
 
-  intr_disable();
+     intr_disable();
 
-      /* The AT and newer PS/2 have two interrupt controllers, one master,
-       * one slaved at IRQ 2.  (We don't have to deal with the PC that
-       * has just one controller, because it must run in real mode.)
-       */
-      outb(INT_CTL, machine.ps_mca ? ICW1_PS : ICW1_AT);
-      outb(INT_CTLMASK, mine ? IRQ0_VECTOR : BIOS_IRQ0_VEC);
-							/* ICW2 for master */
-      outb(INT_CTLMASK, (1 << CASCADE_IRQ));		/* ICW3 tells slaves */
-      outb(INT_CTLMASK, ICW4_AT_MASTER);
-      outb(INT_CTLMASK, ~(1 << CASCADE_IRQ));		/* IRQ 0-7 mask */
-      outb(INT2_CTL, machine.ps_mca ? ICW1_PS : ICW1_AT);
-      outb(INT2_CTLMASK, mine ? IRQ8_VECTOR : BIOS_IRQ8_VEC);
-							/* ICW2 for slave */
-      outb(INT2_CTLMASK, CASCADE_IRQ);		/* ICW3 is slave nr */
-      outb(INT2_CTLMASK, ICW4_AT_SLAVE);
-      outb(INT2_CTLMASK, ~0);				/* IRQ 8-15 mask */
+    /* The AT and newer PS/2 have two interrupt controllers, one master,
+    * one slaved at IRQ 2.  (We don't have to deal with the PC that
+    * has just one controller, because it must run in real mode.)
+    */
+    outb(INT_CTL, machine.ps_mca ? ICW1_PS : ICW1_AT);
+    outb(INT_CTLMASK, mine ? IRQ0_VECTOR : BIOS_IRQ0_VEC);
+                        /* ICW2 for master */
+    outb(INT_CTLMASK, (1 << CASCADE_IRQ));		/* ICW3 tells slaves */
+    outb(INT_CTLMASK, ICW4_AT_MASTER);
+    outb(INT_CTLMASK, ~(1 << CASCADE_IRQ));		/* IRQ 0-7 mask */
+    outb(INT2_CTL, machine.ps_mca ? ICW1_PS : ICW1_AT);
+    outb(INT2_CTLMASK, mine ? IRQ8_VECTOR : BIOS_IRQ8_VEC);
+                        /* ICW2 for slave */
+    outb(INT2_CTLMASK, CASCADE_IRQ);		/* ICW3 is slave nr */
+    outb(INT2_CTLMASK, ICW4_AT_SLAVE);
+    outb(INT2_CTLMASK, ~0);				/* IRQ 8-15 mask */
 
-      /* Copy the BIOS vectors from the BIOS to the Minix location, so we
-       * can still make BIOS calls without reprogramming the i8259s.
-       */
-      phys_copy(BIOS_VECTOR(0) * 4L, VECTOR(0) * 4L, 8 * 4L);
+    /* Copy the BIOS vectors from the BIOS to the Minix location, so we
+    * can still make BIOS calls without reprogramming the i8259s.
+    */
+    phys_copy(BIOS_VECTOR(0) * 4L, VECTOR(0) * 4L, 8 * 4L);
 }
 
 /*===========================================================================*
  *				put_irq_handler				     *
  *===========================================================================*/
-PUBLIC void put_irq_handler(hook, irq, handler)
-irq_hook_t *hook;
-int irq;
-irq_handler_t handler;
+PUBLIC void put_irq_handler(irq_hook_t *hook, int irq, irq_handler_t handler)
 {
 /* Register an interrupt handler. */
   int id;
@@ -93,8 +89,7 @@ irq_handler_t handler;
 /*===========================================================================*
  *				rm_irq_handler				     *
  *===========================================================================*/
-PUBLIC void rm_irq_handler(hook)
-irq_hook_t *hook;
+PUBLIC void rm_irq_handler(irq_hook_t *hook)
 {
 /* Unregister an interrupt handler. */
   int irq = hook->irq; 
@@ -119,8 +114,7 @@ irq_hook_t *hook;
 /*===========================================================================*
  *				intr_handle				     *
  *===========================================================================*/
-PUBLIC void intr_handle(hook)
-irq_hook_t *hook;
+PUBLIC void intr_handle(irq_hook_t *hook)
 {
 /* Call the interrupt handlers for an interrupt with the given hook list.
  * The assembly part of the handler has already masked the IRQ, reenabled the

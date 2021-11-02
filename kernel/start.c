@@ -18,10 +18,10 @@ FORWARD _PROTOTYPE( char *get_value, (_CONST char *params, _CONST char *key));
 /*===========================================================================*
  *				cstart					     *
  *===========================================================================*/
-PUBLIC void cstart(cs, ds, mds, parmoff, parmsize)
-U16_t cs, ds;			/* kernel code and data segment */
-U16_t mds;			/* monitor data segment */
-U16_t parmoff, parmsize;	/* boot parameters offset and length */
+/* kernel code and data segment */
+/* monitor data segment */
+/* boot parameters offset and length */
+PUBLIC void cstart(U16_t cs,U16_t ds, U16_t mds, U16_t parmoff, U16_tparmsize)
 {
 /* Perform system initializations prior to calling main(). Most settings are
  * determined with help of the environment strings passed by MINIX' loader.
@@ -95,9 +95,9 @@ U16_t parmoff, parmsize;	/* boot parameters offset and length */
  *				get_value				     *
  *===========================================================================*/
 
-PRIVATE char *get_value(params, name)
-_CONST char *params;				/* boot monitor parameters */
-_CONST char *name;				/* key to look up */
+/* boot monitor parameters */
+/* key to look up */
+PRIVATE char *get_value(_CONST char *params, _CONST char *name)
 {
 /* Get environment value - kernel version of getenv to avoid setting up the
  * usual environment array.

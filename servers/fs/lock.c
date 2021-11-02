@@ -18,9 +18,8 @@
 /*===========================================================================*
  *				lock_op					     *
  *===========================================================================*/
-PUBLIC int lock_op(f, req)
-struct filp *f;
-int req;			/* either F_SETLK or F_SETLKW */
+/* either F_SETLK or F_SETLKW */
+PUBLIC int lock_op(struct filp *f, int req)
 {
 /* Perform the advisory locking required by POSIX. */
 

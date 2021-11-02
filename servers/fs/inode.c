@@ -31,9 +31,9 @@ FORWARD _PROTOTYPE( void new_icopy, (struct inode *rip, d2_inode *dip,
 /*===========================================================================*
  *				get_inode				     *
  *===========================================================================*/
-PUBLIC struct inode *get_inode(dev, numb)
-dev_t dev;			/* device on which inode resides */
-int numb;			/* inode number (ANSI: may not be unshort) */
+/* device on which inode resides */
+/* inode number (ANSI: may not be unshort) */
+PUBLIC struct inode *get_inode(dev_t dev, int numb)
 {
 /* Find a slot in the inode table, load the specified inode into it, and
  * return a pointer to the slot.  If 'dev' == NO_DEV, just return a free slot.
@@ -74,8 +74,8 @@ int numb;			/* inode number (ANSI: may not be unshort) */
 /*===========================================================================*
  *				put_inode				     *
  *===========================================================================*/
-PUBLIC void put_inode(rip)
-register struct inode *rip;	/* pointer to inode to be released */
+/* pointer to inode to be released */
+PUBLIC void put_inode(register struct inode *rip)
 {
 /* The caller is no longer using this inode.  If no one else is using it either
  * write it back to the disk immediately.  If it has no links, truncate it and
@@ -158,8 +158,8 @@ PUBLIC struct inode *alloc_inode(dev_t dev, mode_t bits)
 /*===========================================================================*
  *				wipe_inode				     *
  *===========================================================================*/
-PUBLIC void wipe_inode(rip)
-register struct inode *rip;	/* the inode to be erased */
+/* the inode to be erased */
+PUBLIC void wipe_inode(register struct inode *rip)
 {
 /* Erase some fields in the inode.  This function is called from alloc_inode()
  * when a new inode is to be allocated, and from truncate(), when an existing
@@ -177,9 +177,9 @@ register struct inode *rip;	/* the inode to be erased */
 /*===========================================================================*
  *				free_inode				     *
  *===========================================================================*/
-PUBLIC void free_inode(dev, inumb)
-dev_t dev;			/* on which device is the inode */
-ino_t inumb;			/* number of inode to be freed */
+/* on which device is the inode */
+/* number of inode to be freed */
+PUBLIC void free_inode(dev_t dev, ino_t inumb)
 {
 /* Return an inode to the pool of unallocated inodes. */
 
@@ -197,8 +197,8 @@ ino_t inumb;			/* number of inode to be freed */
 /*===========================================================================*
  *				update_times				     *
  *===========================================================================*/
-PUBLIC void update_times(rip)
-register struct inode *rip;	/* pointer to inode to be read/written */
+/* pointer to inode to be read/written */
+PUBLIC void update_times(register struct inode *rip)
 {
 /* Various system calls are required by the standard to update atime, ctime,
  * or mtime.  Since updating a time requires sending a message to the clock
@@ -223,9 +223,9 @@ register struct inode *rip;	/* pointer to inode to be read/written */
 /*===========================================================================*
  *				rw_inode				     *
  *===========================================================================*/
-PUBLIC void rw_inode(rip, rw_flag)
-register struct inode *rip;	/* pointer to inode to be read/written */
-int rw_flag;			/* READING or WRITING */
+/* pointer to inode to be read/written */
+/* READING or WRITING */
+PUBLIC void rw_inode(register struct inode *rip, int rw_flag)
 {
 /* An entry in the inode table is to be copied to or from the disk. */
 
@@ -266,12 +266,11 @@ int rw_flag;			/* READING or WRITING */
 /*===========================================================================*
  *				old_icopy				     *
  *===========================================================================*/
-PRIVATE void old_icopy(rip, dip, direction, norm)
-register struct inode *rip;	/* pointer to the in-core inode struct */
-register d1_inode *dip;		/* pointer to the d1_inode inode struct */
-int direction;			/* READING (from disk) or WRITING (to disk) */
-int norm;			/* TRUE = do not swap bytes; FALSE = swap */
-
+/* pointer to the in-core inode struct */
+/* pointer to the d1_inode inode struct */
+/* READING (from disk) or WRITING (to disk) */
+/* TRUE = do not swap bytes; FALSE = swap */
+PRIVATE void old_icopy(register struct inode *rip, register d1_inode *dip, int direction, int norm)
 {
 /* The V1.x IBM disk, the V1.x 68000 disk, and the V2 disk (same for IBM and
  * 68000) all have different inode layouts.  When an inode is read or written
@@ -312,12 +311,11 @@ int norm;			/* TRUE = do not swap bytes; FALSE = swap */
 /*===========================================================================*
  *				new_icopy				     *
  *===========================================================================*/
-PRIVATE void new_icopy(rip, dip, direction, norm)
-register struct inode *rip;	/* pointer to the in-core inode struct */
-register d2_inode *dip;	/* pointer to the d2_inode struct */
-int direction;			/* READING (from disk) or WRITING (to disk) */
-int norm;			/* TRUE = do not swap bytes; FALSE = swap */
-
+/* pointer to the in-core inode struct */
+/* pointer to the d2_inode struct */
+/* READING (from disk) or WRITING (to disk) */
+/* TRUE = do not swap bytes; FALSE = swap */
+PRIVATE void new_icopy(register struct inode *rip, register d2_inode *dip, int direction, int norm)
 {
 /* Same as old_icopy, but to/from V2 disk layout. */
 
@@ -355,8 +353,8 @@ int norm;			/* TRUE = do not swap bytes; FALSE = swap */
 /*===========================================================================*
  *				dup_inode				     *
  *===========================================================================*/
-PUBLIC void dup_inode(ip)
-struct inode *ip;		/* The inode to be duplicated. */
+/* The inode to be duplicated. */
+PUBLIC void dup_inode(struct inode *ip)
 {
 /* This routine is a simplified form of get_inode() for the case where
  * the inode pointer is already known.

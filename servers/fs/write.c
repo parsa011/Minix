@@ -33,10 +33,10 @@ PUBLIC int do_write()
 /*===========================================================================*
  *				write_map				     *
  *===========================================================================*/
-PRIVATE int write_map(rip, position, new_zone)
-register struct inode *rip;	/* pointer to inode to be changed */
-off_t position;			/* file address to be mapped */
-zone_t new_zone;		/* zone # to be inserted */
+/* pointer to inode to be changed */
+/* file address to be mapped */
+/* zone # to be inserted */
+PRIVATE int write_map(register struct inode *rip, off_t position, zone_t new_zone)
 {
 /* Write a new zone into an inode. */
   int scale, ind_ex, new_ind, new_dbl, zones, nr_indirects, single, zindex, ex;
@@ -55,9 +55,9 @@ zone_t new_zone;		/* zone # to be inserted */
 
   /* Is 'position' to be found in the inode itself? */
   if (zone < zones) {
-	zindex = (int) zone;	/* we need an integer here */
-	rip->i_zone[zindex] = new_zone;
-	return(OK);
+    zindex = (int) zone;	/* we need an integer here */
+    rip->i_zone[zindex] = new_zone;
+    return(OK);
   }
 
   /* It is not in the inode, so it must be single or double indirect. */
@@ -66,35 +66,35 @@ zone_t new_zone;		/* zone # to be inserted */
   new_dbl = FALSE;
 
   if (excess < nr_indirects) {
-	/* 'position' can be located via the single indirect block. */
-	z1 = rip->i_zone[zones];	/* single indirect zone */
-	single = TRUE;
+    /* 'position' can be located via the single indirect block. */
+    z1 = rip->i_zone[zones];	/* single indirect zone */
+    single = TRUE;
   } else {
-	/* 'position' can be located via the double indirect block. */
-	if ( (z = rip->i_zone[zones+1]) == NO_ZONE) {
-		/* Create the double indirect block. */
-		if ( (z = alloc_zone(rip->i_dev, rip->i_zone[0])) == NO_ZONE)
-			return(err_code);
-		rip->i_zone[zones+1] = z;
-		new_dbl = TRUE;	/* set flag for later */
-	}
+	  /* 'position' can be located via the double indirect block. */
+    if ( (z = rip->i_zone[zones+1]) == NO_ZONE) {
+      /* Create the double indirect block. */
+      if ( (z = alloc_zone(rip->i_dev, rip->i_zone[0])) == NO_ZONE)
+        return(err_code);
+      rip->i_zone[zones+1] = z;
+      new_dbl = TRUE;	/* set flag for later */
+    }
 
-	/* Either way, 'z' is zone number for double indirect block. */
-	excess -= nr_indirects;	/* single indirect doesn't count */
-	ind_ex = (int) (excess / nr_indirects);
-	excess = excess % nr_indirects;
-	if (ind_ex >= nr_indirects) return(EFBIG);
-	b = (block_t) z << scale;
-	bp = get_block(rip->i_dev, b, (new_dbl ? NO_READ : NORMAL));
-	if (new_dbl) zero_block(bp);
-	z1 = rd_indir(bp, ind_ex);
-	single = FALSE;
+    /* Either way, 'z' is zone number for double indirect block. */
+    excess -= nr_indirects;	/* single indirect doesn't count */
+    ind_ex = (int) (excess / nr_indirects);
+    excess = excess % nr_indirects;
+    if (ind_ex >= nr_indirects) return(EFBIG);
+    b = (block_t) z << scale;
+    bp = get_block(rip->i_dev, b, (new_dbl ? NO_READ : NORMAL));
+    if (new_dbl) zero_block(bp);
+    z1 = rd_indir(bp, ind_ex);
+    single = FALSE;
   }
 
   /* z1 is now single indirect zone; 'excess' is index. */
   if (z1 == NO_ZONE) {
-	/* Create indirect block and store zone # in inode or dbl indir blk. */
-	z1 = alloc_zone(rip->i_dev, rip->i_zone[0]);
+    /* Create indirect block and store zone # in inode or dbl indir blk. */
+    z1 = alloc_zone(rip->i_dev, rip->i_zone[0]);
 	if (single)
 		rip->i_zone[zones] = z1;	/* update inode */
 	else
@@ -124,10 +124,10 @@ zone_t new_zone;		/* zone # to be inserted */
 /*===========================================================================*
  *				wr_indir				     *
  *===========================================================================*/
-PRIVATE void wr_indir(bp, index, zone)
-struct buf *bp;			/* pointer to indirect block */
-int index;			/* index into *bp */
-zone_t zone;			/* zone to write */
+/* pointer to indirect block */
+/* index into *bp */
+/* zone to write */
+PRIVATE void wr_indir(struct buf *bp, int index, zone_t zone)
 {
 /* Given a pointer to an indirect block, write one entry. */
 
@@ -145,10 +145,10 @@ zone_t zone;			/* zone to write */
 /*===========================================================================*
  *				clear_zone				     *
  *===========================================================================*/
-PUBLIC void clear_zone(rip, pos, flag)
-register struct inode *rip;	/* inode to clear */
-off_t pos;			/* points to block to clear */
-int flag;			/* 0 if called by read_write, 1 by new_block */
+/* inode to clear */
+/* points to block to clear */
+/* 0 if called by read_write, 1 by new_block */
+PUBLIC void clear_zone(register struct inode *rip, off_t pos, int flag)
 {
 /* Zero a zone, possibly starting in the middle.  The parameter 'pos' gives
  * a byte in the first block to be zeroed.  Clearzone() is called from 
@@ -172,7 +172,7 @@ int flag;			/* 0 if called by read_write, 1 by new_block */
   /* If 'pos' is in the last block of a zone, do not clear the zone. */
   if (next/zone_size != pos/zone_size) return;
   if ( (blo = read_map(rip, next)) == NO_BLOCK) return;
-  bhi = (  ((blo>>scale)+1) << scale)   - 1;
+  bhi = (((blo>>scale)+1) << scale) - 1;
 
   /* Clear all the blocks between 'blo' and 'bhi'. */
   for (b = blo; b <= bhi; b++) {
@@ -185,9 +185,9 @@ int flag;			/* 0 if called by read_write, 1 by new_block */
 /*===========================================================================*
  *				new_block				     *
  *===========================================================================*/
-PUBLIC struct buf *new_block(rip, position)
-register struct inode *rip;	/* pointer to inode */
-off_t position;			/* file pointer */
+/* pointer to inode */
+/* file pointer */
+PUBLIC struct buf *new_block(register struct inode *rip, off_t position)
 {
 /* Acquire a new block and return a pointer to it.  Doing so may require
  * allocating a complete zone, and then returning the initial block.
@@ -203,30 +203,30 @@ off_t position;			/* file pointer */
 
   /* Is another block available in the current zone? */
   if ( (b = read_map(rip, position)) == NO_BLOCK) {
-	/* Choose first zone if possible. */
-	/* Lose if the file is nonempty but the first zone number is NO_ZONE
-	 * corresponding to a zone full of zeros.  It would be better to
-	 * search near the last real zone.
-	 */
-	if (rip->i_zone[0] == NO_ZONE) {
-		sp = rip->i_sp;
-		z = sp->s_firstdatazone;
-	} else {
-		z = rip->i_zone[0];	/* hunt near first zone */
-	}
-	if ( (z = alloc_zone(rip->i_dev, z)) == NO_ZONE) return(NIL_BUF);
-	if ( (r = write_map(rip, position, z)) != OK) {
-		free_zone(rip->i_dev, z);
-		err_code = r;
-		return(NIL_BUF);
-	}
+    /* Choose first zone if possible. */
+    /* Lose if the file is nonempty but the first zone number is NO_ZONE
+    * corresponding to a zone full of zeros.  It would be better to
+    * search near the last real zone.
+    */
+    if (rip->i_zone[0] == NO_ZONE) {
+      sp = rip->i_sp;
+      z = sp->s_firstdatazone;
+    } else {
+      z = rip->i_zone[0];	/* hunt near first zone */
+    }
+    if ( (z = alloc_zone(rip->i_dev, z)) == NO_ZONE) return(NIL_BUF);
+    if ( (r = write_map(rip, position, z)) != OK) {
+      free_zone(rip->i_dev, z);
+      err_code = r;
+      return(NIL_BUF);
+    }
 
-	/* If we are not writing at EOF, clear the zone, just to be safe. */
-	if ( position != rip->i_size) clear_zone(rip, position, 1);
-	scale = rip->i_sp->s_log_zone_size;
-	base_block = (block_t) z << scale;
-	zone_size = (zone_t) rip->i_sp->s_block_size << scale;
-	b = base_block + (block_t)((position % zone_size)/rip->i_sp->s_block_size);
+    /* If we are not writing at EOF, clear the zone, just to be safe. */
+    if ( position != rip->i_size) clear_zone(rip, position, 1);
+    scale = rip->i_sp->s_log_zone_size;
+    base_block = (block_t) z << scale;
+    zone_size = (zone_t) rip->i_sp->s_block_size << scale;
+    b = base_block + (block_t)((position % zone_size)/rip->i_sp->s_block_size);
   }
 
   bp = get_block(rip->i_dev, b, NO_READ);
@@ -237,8 +237,8 @@ off_t position;			/* file pointer */
 /*===========================================================================*
  *				zero_block				     *
  *===========================================================================*/
-PUBLIC void zero_block(bp)
-register struct buf *bp;	/* pointer to buffer to zero */
+/* pointer to buffer to zero */
+PUBLIC void zero_block(register struct buf *bp)
 {
 /* Zero a block. */
   memset(bp->b_data, 0, MAX_BLOCK_SIZE);

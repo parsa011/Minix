@@ -63,4 +63,3 @@ PUBLIC int do_stime()
   boottime = (long) m_in.pm_stime; 
   return(OK);
 }
-

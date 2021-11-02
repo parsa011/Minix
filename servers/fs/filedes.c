@@ -59,8 +59,8 @@ PUBLIC int get_fd(int start, mode_t bits, int *k, struct filp **fpt)
 /*===========================================================================*
  *				get_filp				     *
  *===========================================================================*/
-PUBLIC struct filp *get_filp(fild)
-int fild;			/* file descriptor */
+/* file descriptor */
+PUBLIC struct filp *get_filp(int fild)
 {
 /* See if 'fild' refers to a valid file descr.  If so, return its filp ptr. */
 

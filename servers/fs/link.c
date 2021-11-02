@@ -314,8 +314,8 @@ PUBLIC int do_rename()
 /*===========================================================================*
  *				truncate				     *
  *===========================================================================*/
-PUBLIC void truncate(rip)
-register struct inode *rip;	/* pointer to inode to be truncated */
+/* pointer to inode to be truncated */
+PUBLIC void truncate(register struct inode *rip)
 {
 /* Remove all the zones from the inode 'rip' and mark it dirty. */
 
@@ -373,10 +373,10 @@ register struct inode *rip;	/* pointer to inode to be truncated */
 /*===========================================================================*
  *				remove_dir				     *
  *===========================================================================*/
-PRIVATE int remove_dir(rldirp, rip, dir_name)
-struct inode *rldirp;		 	/* parent directory */
-struct inode *rip;			/* directory to be removed */
-char dir_name[NAME_MAX];		/* name of directory to be removed */
+/* parent directory */
+/* directory to be removed */
+/* name of directory to be removed */
+PRIVATE int remove_dir(struct inode *rldirp, struct inode *rip, char dir_name[NAME_MAX])
 {
   /* A directory file has to be removed. Five conditions have to met:
    * 	- The file must be a directory
@@ -413,10 +413,10 @@ char dir_name[NAME_MAX];		/* name of directory to be removed */
 /*===========================================================================*
  *				unlink_file				     *
  *===========================================================================*/
-PRIVATE int unlink_file(dirp, rip, file_name)
-struct inode *dirp;		/* parent directory of file */
-struct inode *rip;		/* inode of file, may be NIL_INODE too. */
-char file_name[NAME_MAX];	/* name of file to be removed */
+/* parent directory of file */
+/* inode of file, may be NIL_INODE too. */
+/* name of file to be removed */
+PRIVATE int unlink_file(struct inode *dirp, struct inode *rip, char file_name[NAME_MAX])
 {
 /* Unlink 'file_name'; rip must be the inode of 'file_name' or NIL_INODE. */
 

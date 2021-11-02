@@ -111,4 +111,3 @@ PUBLIC _PROTOTYPE (int (*call_vec[]), (void) ) = {
 };
 /* This should not fail with "array size is negative": */
 extern int dummy[sizeof(call_vec) == NCALLS * sizeof(call_vec[0]) ? 1 : -1];
-

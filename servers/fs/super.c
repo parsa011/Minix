@@ -22,10 +22,10 @@
 /*===========================================================================*
  *				alloc_bit				     *
  *===========================================================================*/
-PUBLIC bit_t alloc_bit(sp, map, origin)
-struct super_block *sp;		/* the filesystem to allocate from */
-int map;			/* IMAP (inode map) or ZMAP (zone map) */
-bit_t origin;			/* number of bit to start searching at */
+/* the filesystem to allocate from */
+/* IMAP (inode map) or ZMAP (zone map) */
+/* number of bit to start searching at */
+PUBLIC bit_t alloc_bit(struct super_block *sp, int map, bit_t origin)
 {
 /* Allocate a bit from a bit map and return its bit number. */
 
@@ -38,16 +38,16 @@ bit_t origin;			/* number of bit to start searching at */
   bit_t i, b;
 
   if (sp->s_rd_only)
-	panic(__FILE__,"can't allocate bit on read-only filesys.", NO_NUM);
+	  panic(__FILE__,"can't allocate bit on read-only filesys.", NO_NUM);
 
   if (map == IMAP) {
-	start_block = START_BLOCK;
-	map_bits = sp->s_ninodes + 1;
-	bit_blocks = sp->s_imap_blocks;
+    start_block = START_BLOCK;
+    map_bits = sp->s_ninodes + 1;
+    bit_blocks = sp->s_imap_blocks;
   } else {
-	start_block = START_BLOCK + sp->s_imap_blocks;
-	map_bits = sp->s_zones - (sp->s_firstdatazone - 1);
-	bit_blocks = sp->s_zmap_blocks;
+    start_block = START_BLOCK + sp->s_imap_blocks;
+    map_bits = sp->s_zones - (sp->s_firstdatazone - 1);
+    bit_blocks = sp->s_zmap_blocks;
   }
 
   /* Figure out where to start the bit search (depends on 'origin'). */
@@ -90,7 +90,7 @@ bit_t origin;			/* number of bit to start searching at */
 	}
 	put_block(bp, MAP_BLOCK);
 	if (++block >= bit_blocks) block = 0;	/* last block, wrap around */
-	word = 0;
+	  word = 0;
   } while (--bcount > 0);
   return(NO_BIT);		/* no bit could be allocated */
 }
@@ -98,10 +98,10 @@ bit_t origin;			/* number of bit to start searching at */
 /*===========================================================================*
  *				free_bit				     *
  *===========================================================================*/
-PUBLIC void free_bit(sp, map, bit_returned)
-struct super_block *sp;		/* the filesystem to operate on */
-int map;			/* IMAP (inode map) or ZMAP (zone map) */
-bit_t bit_returned;		/* number of bit to insert into the map */
+/* the filesystem to operate on */
+/* IMAP (inode map) or ZMAP (zone map) */
+/* number of bit to insert into the map */
+PUBLIC void free_bit(struct super_block *sp, int map, bit_t bit_returned)
 {
 /* Return a zone or inode by turning off its bitmap bit. */
 
@@ -111,12 +111,12 @@ bit_t bit_returned;		/* number of bit to insert into the map */
   block_t start_block;
 
   if (sp->s_rd_only)
-	panic(__FILE__,"can't free bit on read-only filesys.", NO_NUM);
+	  panic(__FILE__,"can't free bit on read-only filesys.", NO_NUM);
 
   if (map == IMAP) {
-	start_block = START_BLOCK;
+	  start_block = START_BLOCK;
   } else {
-	start_block = START_BLOCK + sp->s_imap_blocks;
+	  start_block = START_BLOCK + sp->s_imap_blocks;
   }
   block = bit_returned / FS_BITS_PER_BLOCK(sp->s_block_size);
   word = (bit_returned % FS_BITS_PER_BLOCK(sp->s_block_size))
@@ -129,8 +129,8 @@ bit_t bit_returned;		/* number of bit to insert into the map */
 
   k = conv2(sp->s_native, (int) bp->b_bitmap[word]);
   if (!(k & mask)) {
-	panic(__FILE__,map == IMAP ? "tried to free unused inode" :
-	      "tried to free unused block", NO_NUM);
+    panic(__FILE__,map == IMAP ? "tried to free unused inode" :
+          "tried to free unused block", NO_NUM);
   }
 
   k &= ~mask;
@@ -143,8 +143,8 @@ bit_t bit_returned;		/* number of bit to insert into the map */
 /*===========================================================================*
  *				get_super				     *
  *===========================================================================*/
-PUBLIC struct super_block *get_super(dev)
-dev_t dev;			/* device number whose super_block is sought */
+/* device number whose super_block is sought */
+PUBLIC struct super_block *get_super(dev_t dev)
 {
 /* Search the superblock table for this device.  It is supposed to be there. */
 
@@ -187,8 +187,8 @@ PUBLIC int get_block_size(dev_t dev)
 /*===========================================================================*
  *				mounted					     *
  *===========================================================================*/
-PUBLIC int mounted(rip)
-register struct inode *rip;	/* pointer to inode */
+/* pointer to inode */
+PUBLIC int mounted(register struct inode *rip)
 {
 /* Report on whether the given inode is on a mounted (or ROOT) file system. */
 
@@ -207,8 +207,8 @@ register struct inode *rip;	/* pointer to inode */
 /*===========================================================================*
  *				read_super				     *
  *===========================================================================*/
-PUBLIC int read_super(sp)
-register struct super_block *sp; /* pointer to a superblock */
+/* pointer to a superblock */
+PUBLIC int read_super(register struct super_block *sp)
 {
 /* Read a superblock. */
   dev_t dev;
@@ -230,16 +230,16 @@ register struct super_block *sp; /* pointer to a superblock */
 
   /* Get file system version and type. */
   if (magic == SUPER_MAGIC || magic == conv2(BYTE_SWAP, SUPER_MAGIC)) {
-	version = V1;
-	native  = (magic == SUPER_MAGIC);
+    version = V1;
+    native  = (magic == SUPER_MAGIC);
   } else if (magic == SUPER_V2 || magic == conv2(BYTE_SWAP, SUPER_V2)) {
-	version = V2;
-	native  = (magic == SUPER_V2);
+    version = V2;
+    native  = (magic == SUPER_V2);
   } else if (magic == SUPER_V3) {
-	version = V3;
-  	native = 1;
+    version = V3;
+    native = 1;
   } else {
-	return(EINVAL);
+	  return(EINVAL);
   }
 
   /* If the super block has the wrong byte order, swap the fields; the magic
@@ -266,18 +266,18 @@ register struct super_block *sp; /* pointer to a superblock */
    */
   if (version == V1) {
   	sp->s_block_size = STATIC_BLOCK_SIZE;
-	sp->s_zones = sp->s_nzones;	/* only V1 needs this copy */
-	sp->s_inodes_per_block = V1_INODES_PER_BLOCK;
-	sp->s_ndzones = V1_NR_DZONES;
-	sp->s_nindirs = V1_INDIRECTS;
+    sp->s_zones = sp->s_nzones;	/* only V1 needs this copy */
+    sp->s_inodes_per_block = V1_INODES_PER_BLOCK;
+    sp->s_ndzones = V1_NR_DZONES;
+    sp->s_nindirs = V1_INDIRECTS;
   } else {
   	if (version == V2)
   		sp->s_block_size = STATIC_BLOCK_SIZE;
   	if (sp->s_block_size < MIN_BLOCK_SIZE)
   		return EINVAL;
-	sp->s_inodes_per_block = V2_INODES_PER_BLOCK(sp->s_block_size);
-	sp->s_ndzones = V2_NR_DZONES;
-	sp->s_nindirs = V2_INDIRECTS(sp->s_block_size);
+    sp->s_inodes_per_block = V2_INODES_PER_BLOCK(sp->s_block_size);
+    sp->s_ndzones = V2_NR_DZONES;
+    sp->s_nindirs = V2_INDIRECTS(sp->s_block_size);
   }
 
   if (sp->s_block_size < MIN_BLOCK_SIZE) {

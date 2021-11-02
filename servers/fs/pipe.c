@@ -84,14 +84,14 @@ PUBLIC int do_pipe()
 /*===========================================================================*
  *				pipe_check				     *
  *===========================================================================*/
-PUBLIC int pipe_check(rip, rw_flag, oflags, bytes, position, canwrite, notouch)
-register struct inode *rip;	/* the inode of the pipe */
-int rw_flag;			/* READING or WRITING */
-int oflags;			/* flags set by open or fcntl */
-register int bytes;		/* bytes to be read or written (all chunks) */
-register off_t position;	/* current file position */
-int *canwrite;			/* return: number of bytes we can write */
-int notouch;			/* check only */
+/* the inode of the pipe */
+/* READING or WRITING */
+/* flags set by open or fcntl */
+/* bytes to be read or written (all chunks) */
+/* current file position */
+/* return: number of bytes we can write */
+/* check only */
+PUBLIC int pipe_check(register struct inode *rip, int rw_flag, int oflags, register int bytes, register off_t position, int *canwrite, int notouch)
 {
 /* Pipes are a little different.  If a process reads from an empty pipe for
  * which a writer still exists, suspend the reader.  If the pipe is empty
@@ -171,8 +171,8 @@ int notouch;			/* check only */
 /*===========================================================================*
  *				suspend					     *
  *===========================================================================*/
-PUBLIC void suspend(task)
-int task;			/* who is proc waiting for? (PIPE = pipe) */
+/* who is proc waiting for? (PIPE = pipe) */
+PUBLIC void suspend(int task)
 {
 /* Take measures to suspend the processing of the present system call.
  * Store the parameters to be used upon resuming in the process table.
@@ -197,10 +197,10 @@ int task;			/* who is proc waiting for? (PIPE = pipe) */
 /*===========================================================================*
  *				release					     *
  *===========================================================================*/
-PUBLIC void release(ip, call_nr, count)
-register struct inode *ip;	/* inode of pipe */
-int call_nr;			/* READ, WRITE, OPEN or CREAT */
-int count;			/* max number of processes to release */
+/* inode of pipe */
+/* READ, WRITE, OPEN or CREAT */
+/* max number of processes to release */
+PUBLIC void release(register struct inode *ip, int call_nr, int count)
 {
 /* Check to see if any process is hanging on the pipe whose inode is in 'ip'.
  * If one is, and it was trying to perform the call indicated by 'call_nr',
@@ -244,9 +244,9 @@ int count;			/* max number of processes to release */
 /*===========================================================================*
  *				revive					     *
  *===========================================================================*/
-PUBLIC void revive(proc_nr, returned)
-int proc_nr;			/* process to revive */
-int returned;			/* if hanging on task, how many bytes read */
+/* process to revive */
+/* if hanging on task, how many bytes read */
+PUBLIC void revive(int proc_nr, int returned)
 {
 /* Revive a previously blocked process. When a process hangs on tty, this
  * is the way it is eventually released.
@@ -383,4 +383,3 @@ PUBLIC int select_match_pipe(struct filp *f)
 		return 1;
 	return 0;
 }
-

@@ -76,10 +76,10 @@ PUBLIC int do_devctl()
 /*===========================================================================*
  *				map_driver		 		     *
  *===========================================================================*/
-PUBLIC int map_driver(major, proc_nr, style)
-int major;			/* major number of the device */
-int proc_nr;			/* process number of the driver */
-int style;			/* style of the device */
+/* major number of the device */
+/* process number of the driver */
+/* style of the device */
+PUBLIC int map_driver(int major, int proc_nr, int style)
 {
 /* Set a new device driver mapping in the dmap table. Given that correct 
  * arguments are given, this only works if the entry is mutable and the 

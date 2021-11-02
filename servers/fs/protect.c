@@ -197,8 +197,8 @@ PUBLIC int forbidden(register struct inode *rip, mode_t access_desired)
 /*===========================================================================*
  *				read_only				     *
  *===========================================================================*/
-PUBLIC int read_only(ip)
-struct inode *ip;		/* ptr to inode whose file sys is to be cked */
+/* ptr to inode whose file sys is to be cked */
+PUBLIC int read_only(struct inode *ip)
 {
 /* Check to see if the file system on which the inode 'ip' resides is mounted
  * read only.  If so, return EROFS, else return OK.

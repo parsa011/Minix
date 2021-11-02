@@ -24,10 +24,10 @@ FORWARD _PROTOTYPE( void rm_lru, (struct buf *bp) );
 /*===========================================================================*
  *				get_block				     *
  *===========================================================================*/
-PUBLIC struct buf *get_block(dev, block, only_search)
-register dev_t dev;		/* on which device is the block? */
-register block_t block;		/* which block is wanted? */
-int only_search;		/* if NO_READ, don't read, else act normal */
+/* on which device is the block? */
+/* which block is wanted? */
+/* if NO_READ, don't read, else act normal */
+PUBLIC struct buf *get_block(register dev_t dev, register block_t block, int only_search)
 {
 /* Check to see if the requested block is in the block cache.  If so, return
  * a pointer to it.  If not, evict some other block and fetch it (unless
@@ -118,9 +118,9 @@ int only_search;		/* if NO_READ, don't read, else act normal */
 /*===========================================================================*
  *				put_block				     *
  *===========================================================================*/
-PUBLIC void put_block(bp, block_type)
-register struct buf *bp;	/* pointer to the buffer to be released */
-int block_type;			/* INODE_BLOCK, DIRECTORY_BLOCK, or whatever */
+/* pointer to the buffer to be released */
+/* INODE_BLOCK, DIRECTORY_BLOCK, or whatever */
+PUBLIC void put_block(register struct buf *bp, int block_type)
 {
 /* Return a block to the list of available blocks.   Depending on 'block_type'
  * it may be put on the front or rear of the LRU chain.  Blocks that are
@@ -178,9 +178,9 @@ int block_type;			/* INODE_BLOCK, DIRECTORY_BLOCK, or whatever */
 /*===========================================================================*
  *				alloc_zone				     *
  *===========================================================================*/
-PUBLIC zone_t alloc_zone(dev, z)
-dev_t dev;			/* device where zone wanted */
-zone_t z;			/* try to allocate new zone near this one */
+/* device where zone wanted */
+/* try to allocate new zone near this one */
+PUBLIC zone_t alloc_zone(dev_t dev, zone_t z)
 {
 /* Allocate a new zone on the indicated device and return its number. */
 
@@ -219,9 +219,9 @@ zone_t z;			/* try to allocate new zone near this one */
 /*===========================================================================*
  *				free_zone				     *
  *===========================================================================*/
-PUBLIC void free_zone(dev, numb)
-dev_t dev;				/* device where zone located */
-zone_t numb;				/* zone to be returned */
+/* device where zone located */
+/* zone to be returned */
+PUBLIC void free_zone(dev_t dev, zone_t numb)
 {
 /* Return a zone. */
 
@@ -239,9 +239,9 @@ zone_t numb;				/* zone to be returned */
 /*===========================================================================*
  *				rw_block				     *
  *===========================================================================*/
-PUBLIC void rw_block(bp, rw_flag)
-register struct buf *bp;	/* buffer pointer */
-int rw_flag;			/* READING or WRITING */
+/* buffer pointer */
+/* READING or WRITING */
+PUBLIC void rw_block(register struct buf *bp, int rw_flag)
 {
 /* Read or write a disk block. This is the only routine in which actual disk
  * I/O is invoked. If an error occurs, a message is printed here, but the error
@@ -278,8 +278,8 @@ int rw_flag;			/* READING or WRITING */
 /*===========================================================================*
  *				invalidate				     *
  *===========================================================================*/
-PUBLIC void invalidate(device)
-dev_t device;			/* device whose blocks are to be purged */
+/* device whose blocks are to be purged */
+PUBLIC void invalidate(dev_t device)
 {
 /* Remove all the blocks belonging to some device from the cache. */
 
@@ -292,8 +292,8 @@ dev_t device;			/* device whose blocks are to be purged */
 /*===========================================================================*
  *				flushall				     *
  *===========================================================================*/
-PUBLIC void flushall(dev)
-dev_t dev;			/* device to flush */
+/* device to flush */
+PUBLIC void flushall(dev_t dev)
 {
 /* Flush all dirty blocks for one device. */
 
@@ -309,11 +309,11 @@ dev_t dev;			/* device to flush */
 /*===========================================================================*
  *				rw_scattered				     *
  *===========================================================================*/
-PUBLIC void rw_scattered(dev, bufq, bufqsize, rw_flag)
-dev_t dev;			/* major-minor device number */
-struct buf **bufq;		/* pointer to array of buffers */
-int bufqsize;			/* number of buffers */
-int rw_flag;			/* READING or WRITING */
+/* major-minor device number */
+/* pointer to array of buffers */
+/* number of buffers */
+/* READING or WRITING */
+PUBLIC void rw_scattered(dev_t dev, struct buf **bufq, int bufqsize, int rw_flag;)
 {
 /* Read or write scattered data from a device. */
 
@@ -407,8 +407,7 @@ int rw_flag;			/* READING or WRITING */
 /*===========================================================================*
  *				rm_lru					     *
  *===========================================================================*/
-PRIVATE void rm_lru(bp)
-struct buf *bp;
+PRIVATE void rm_lru(struct buf *bp)
 {
 /* Remove a block from its LRU chain. */
   struct buf *next_ptr, *prev_ptr;

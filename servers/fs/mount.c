@@ -43,8 +43,8 @@ PUBLIC int do_mount()
   sp = NIL_SUPER;
   found = FALSE;
   for (xp = &super_block[0]; xp < &super_block[NR_SUPERS]; xp++) {
-	if (xp->s_dev == dev) found = TRUE;	/* is it mounted already? */
-	if (xp->s_dev == NO_DEV) sp = xp;	/* record free slot */
+    if (xp->s_dev == dev) found = TRUE;	/* is it mounted already? */
+    if (xp->s_dev == NO_DEV) sp = xp;	/* record free slot */
   }
   if (found) return(EBUSY);	/* already mounted */
   if (sp == NIL_SUPER) return(ENFILE);	/* no super block available */
@@ -63,21 +63,21 @@ PUBLIC int do_mount()
 
   /* Is it recognized as a Minix filesystem? */
   if (r != OK) {
-	dev_close(dev);
-	sp->s_dev = NO_DEV;
-	return(r);
+    dev_close(dev);
+    sp->s_dev = NO_DEV;
+    return(r);
   }
 
   /* Now get the inode of the file to be mounted on. */
   if (fetch_name(m_in.name2, m_in.name2_length, M1) != OK) {
-	dev_close(dev);
-	sp->s_dev = NO_DEV;
-	return(err_code);
+    dev_close(dev);
+    sp->s_dev = NO_DEV;
+    return(err_code);
   }
   if ( (rip = eat_path(user_path)) == NIL_INODE) {
-	dev_close(dev);
-	sp->s_dev = NO_DEV;
-	return(err_code);
+    dev_close(dev);
+    sp->s_dev = NO_DEV;
+    return(err_code);
   }
 
   /* It may not be busy. */
@@ -91,17 +91,17 @@ PUBLIC int do_mount()
   /* Get the root inode of the mounted file system. */
   root_ip = NIL_INODE;		/* if 'r' not OK, make sure this is defined */
   if (r == OK) {
-	if ( (root_ip = get_inode(dev, ROOT_INODE)) == NIL_INODE) r = err_code;
-  }
-  if (root_ip != NIL_INODE && root_ip->i_mode == 0) {
-  	r = EINVAL;
+    if ( (root_ip = get_inode(dev, ROOT_INODE)) == NIL_INODE) r = err_code;
+    }
+    if (root_ip != NIL_INODE && root_ip->i_mode == 0) {
+      r = EINVAL;
   }
 
   /* File types of 'rip' and 'root_ip' may not conflict. */
   if (r == OK) {
-	mdir = ((rip->i_mode & I_TYPE) == I_DIRECTORY);  /* TRUE iff dir */
-	rdir = ((root_ip->i_mode & I_TYPE) == I_DIRECTORY);
-	if (!mdir && rdir) r = EISDIR;
+    mdir = ((rip->i_mode & I_TYPE) == I_DIRECTORY);  /* TRUE iff dir */
+    rdir = ((root_ip->i_mode & I_TYPE) == I_DIRECTORY);
+    if (!mdir && rdir) r = EISDIR;
   }
 
   /* If error, return the super block and both inodes; release the maps. */
@@ -144,8 +144,7 @@ PUBLIC int do_umount()
 /*===========================================================================*
  *				unmount					     *
  *===========================================================================*/
-PUBLIC int unmount(dev)
-Dev_t dev;
+PUBLIC int unmount(Dev_t dev)
 {
 /* Unmount a file system by device number. */
   register struct inode *rip;
@@ -191,8 +190,8 @@ Dev_t dev;
 /*===========================================================================*
  *				name_to_dev				     *
  *===========================================================================*/
-PRIVATE dev_t name_to_dev(path)
-char *path;			/* pointer to path name */
+/* pointer to path name */
+PRIVATE dev_t name_to_dev(char *path)
 {
 /* Convert the block special file 'path' to a device number.  If 'path'
  * is not a block special file, return error code in 'err_code'.

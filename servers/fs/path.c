@@ -25,8 +25,8 @@ FORWARD _PROTOTYPE( char *get_name, (char *old_name, char string [NAME_MAX]) );
 /*===========================================================================*
  *				eat_path				     *
  *===========================================================================*/
-PUBLIC struct inode *eat_path(path)
-char *path;			/* the path name to be parsed */
+/* the path name to be parsed */
+PUBLIC struct inode *eat_path(char *path)
 {
 /* Parse the path 'path' and put its inode in the inode table. If not possible,
  * return NIL_INODE as function value and an error code in 'err_code'.
@@ -52,9 +52,9 @@ char *path;			/* the path name to be parsed */
 /*===========================================================================*
  *				last_dir				     *
  *===========================================================================*/
-PUBLIC struct inode *last_dir(path, string)
-char *path;			/* the path name to be parsed */
-char string[NAME_MAX];		/* the final component is returned here */
+/* the path name to be parsed */
+/* the final component is returned here */
+PUBLIC struct inode *last_dir(char *path, char string[NAME_MAX])
 {
 /* Given a path, 'path', located in the fs address space, parse it as
  * far as the last directory, fetch the inode for the last directory into
@@ -111,9 +111,9 @@ char string[NAME_MAX];		/* the final component is returned here */
 /*===========================================================================*
  *				get_name				     *
  *===========================================================================*/
-PRIVATE char *get_name(old_name, string)
-char *old_name;			/* path name to parse */
-char string[NAME_MAX];		/* component extracted from 'old_name' */
+/* path name to parse */
+/* component extracted from 'old_name' */
+PRIVATE char *get_name(char *old_name, char string[NAME_MAX])
 {
 /* Given a pointer to a path name in fs space, 'old_name', copy the next
  * component to 'string' and pad with zeros.  A pointer to that part of
@@ -152,9 +152,9 @@ char string[NAME_MAX];		/* component extracted from 'old_name' */
 /*===========================================================================*
  *				advance					     *
  *===========================================================================*/
-PUBLIC struct inode *advance(dirp, string)
-struct inode *dirp;		/* inode for directory to be searched */
-char string[NAME_MAX];		/* component name to look for */
+/* inode for directory to be searched */
+/* component name to look for */
+PUBLIC struct inode *advance(struct inode *dirp, char string[NAME_MAX])
 {
 /* Given a directory and a component of a path, look up the component in
  * the directory, find the inode, open it, and return a pointer to its inode
@@ -233,11 +233,11 @@ char string[NAME_MAX];		/* component name to look for */
 /*===========================================================================*
  *				search_dir				     *
  *===========================================================================*/
-PUBLIC int search_dir(ldir_ptr, string, numb, flag)
-register struct inode *ldir_ptr; /* ptr to inode for dir to search */
-char string[NAME_MAX];		 /* component to search for */
-ino_t *numb;			 /* pointer to inode number */
-int flag;			 /* LOOK_UP, ENTER, DELETE or IS_EMPTY */
+/* ptr to inode for dir to search */
+/* component to search for */
+/* pointer to inode number */
+/* LOOK_UP, ENTER, DELETE or IS_EMPTY */
+PUBLIC int search_dir(register struct inode *ldir_ptr, char string[NAME_MAX], ino_t *numb, int flag)
 {
 /* This function searches the directory whose inode is pointed to by 'ldip':
  * if (flag == ENTER)  enter 'string' in the directory with inode # '*numb';

@@ -36,8 +36,8 @@ PUBLIC int do_read()
 /*===========================================================================*
  *				read_write				     *
  *===========================================================================*/
-PUBLIC int read_write(rw_flag)
-int rw_flag;			/* READING or WRITING */
+/* READING or WRITING */
+PUBLIC int read_write(int rw_flag)
 {
 /* Perform read(fd, buffer, nbytes) or write(fd, buffer, nbytes) call. */
 
@@ -62,19 +62,20 @@ int rw_flag;			/* READING or WRITING */
 
   /* MM loads segments by putting funny things in upper 10 bits of 'fd'. */
   if (who == PM_PROC_NR && (m_in.fd & (~BYTE)) ) {
-	usr = m_in.fd >> 7;
-	seg = (m_in.fd >> 5) & 03;
-	m_in.fd &= 037;		/* get rid of user and segment bits */
+    usr = m_in.fd >> 7;
+    seg = (m_in.fd >> 5) & 03;
+    m_in.fd &= 037;		/* get rid of user and segment bits */
   } else {
-	usr = who;		/* normal case */
-	seg = D;
+    usr = who;		/* normal case */
+    seg = D;
   }
 
   /* If the file descriptor is valid, get the inode, size and mode. */
   if (m_in.nbytes < 0) return(EINVAL);
-  if ((f = get_filp(m_in.fd)) == NIL_FILP) return(err_code);
+    if ((f = get_filp(m_in.fd)) == NIL_FILP) 
+      return(err_code);
   if (((f->filp_mode) & (rw_flag == READING ? R_BIT : W_BIT)) == 0) {
-	return(f->filp_mode == FILP_CLOSED ? EIO : EBADF);
+	    return(f->filp_mode == FILP_CLOSED ? EIO : EBADF);
   }
   if (m_in.nbytes == 0)
   	 return(0);	/* so char special files need not check for 0*/
@@ -84,17 +85,17 @@ int rw_flag;			/* READING or WRITING */
    * do this after 0-check above because umap doesn't want to map 0 bytes.
    */
   if ((r = sys_umap(usr, seg, (vir_bytes) m_in.buffer, m_in.nbytes, &p)) != OK)
-	return r;
+	  return r;
   position = f->filp_pos;
   oflags = f->filp_flags;
   rip = f->filp_ino;
   f_size = rip->i_size;
   r = OK;
   if (rip->i_pipe == I_PIPE) {
-	/* fp->fp_cum_io_partial is only nonzero when doing partial writes */
-	cum_io = fp->fp_cum_io_partial; 
+  	/* fp->fp_cum_io_partial is only nonzero when doing partial writes */
+	  cum_io = fp->fp_cum_io_partial; 
   } else {
-	cum_io = 0;
+	  cum_io = 0;
   }
   op = (rw_flag == READING ? DEV_READ : DEV_WRITE);
   mode_word = rip->i_mode & I_TYPE;
@@ -192,19 +193,19 @@ int rw_flag;			/* READING or WRITING */
 
   /* On write, update file size and access time. */
   if (rw_flag == WRITING) {
-	if (regular || mode_word == I_DIRECTORY) {
-		if (position > f_size) rip->i_size = position;
-	}
+    if (regular || mode_word == I_DIRECTORY) {
+      if (position > f_size) rip->i_size = position;
+    }
   } else {
-	if (rip->i_pipe == I_PIPE) {
-		if ( position >= rip->i_size) {
-			/* Reset pipe pointers. */
-			rip->i_size = 0;	/* no data left */
-			position = 0;		/* reset reader(s) */
-			wf = find_filp(rip, W_BIT);
-			if (wf != NIL_FILP) wf->filp_pos = 0;
-		}
-	}
+    if (rip->i_pipe == I_PIPE) {
+      if ( position >= rip->i_size) {
+        /* Reset pipe pointers. */
+        rip->i_size = 0;	/* no data left */
+        position = 0;		/* reset reader(s) */
+        wf = find_filp(rip, W_BIT);
+        if (wf != NIL_FILP) wf->filp_pos = 0;
+      }
+    }
   }
   f->filp_pos = position;
 
@@ -224,21 +225,21 @@ int rw_flag;			/* READING or WRITING */
 	r = r2;
   }
   if (r == OK) {
-	if (rw_flag == READING) rip->i_update |= ATIME;
-	if (rw_flag == WRITING) rip->i_update |= CTIME | MTIME;
-	rip->i_dirt = DIRTY;		/* inode is thus now dirty */
-	if (partial_pipe) {
-		partial_pipe = 0;
-			/* partial write on pipe with */
-		/* O_NONBLOCK, return write count */
-		if (!(oflags & O_NONBLOCK)) {
-			fp->fp_cum_io_partial = cum_io;
-			suspend(XPIPE);   /* partial write on pipe with */
-			return(SUSPEND);  /* nbyte > PIPE_SIZE - non-atomic */
-		}
-	}
-	fp->fp_cum_io_partial = 0;
-	return(cum_io);
+    if (rw_flag == READING) rip->i_update |= ATIME;
+    if (rw_flag == WRITING) rip->i_update |= CTIME | MTIME;
+    rip->i_dirt = DIRTY;		/* inode is thus now dirty */
+    if (partial_pipe) {
+      partial_pipe = 0;
+        /* partial write on pipe with */
+      /* O_NONBLOCK, return write count */
+      if (!(oflags & O_NONBLOCK)) {
+        fp->fp_cum_io_partial = cum_io;
+        suspend(XPIPE);   /* partial write on pipe with */
+        return(SUSPEND);  /* nbyte > PIPE_SIZE - non-atomic */
+      }
+    }
+    fp->fp_cum_io_partial = 0;
+    return(cum_io);
   }
   if (bufs_in_use < 0) {
   	panic(__FILE__,"end - bufs_in_use negative", bufs_in_use);
@@ -249,19 +250,19 @@ int rw_flag;			/* READING or WRITING */
 /*===========================================================================*
  *				rw_chunk				     *
  *===========================================================================*/
-PRIVATE int rw_chunk(rip, position, off, chunk, left, rw_flag, buff,
- seg, usr, block_size, completed)
-register struct inode *rip;	/* pointer to inode for file to be rd/wr */
-off_t position;			/* position within file to read or write */
-unsigned off;			/* off within the current block */
-int chunk;			/* number of bytes to read or write */
-unsigned left;			/* max number of bytes wanted after position */
-int rw_flag;			/* READING or WRITING */
-char *buff;			/* virtual address of the user buffer */
-int seg;			/* T or D segment in user space */
-int usr;			/* which user process */
-int block_size;			/* block size of FS operating on */
-int *completed;			/* number of bytes copied */
+/* pointer to inode for file to be rd/wr */
+/* position within file to read or write */
+/* off within the current block */
+/* number of bytes to read or write */
+/* max number of bytes wanted after position */
+/* READING or WRITING */
+/* virtual address of the user buffer */
+/* T or D segment in user space */
+/* which user process */
+/* block size of FS operating on */
+/* number of bytes copied */
+PRIVATE int rw_chunk(register struct inode *rip, off_t position, unsigned off, int chunk, unsigned left, int rw_flag, char *buff,
+ int seg, int usr, int block_size, int *completed)
 {
 /* Read or write (part of) a block. */
 
@@ -275,33 +276,33 @@ int *completed;			/* number of bytes copied */
 
   block_spec = (rip->i_mode & I_TYPE) == I_BLOCK_SPECIAL;
   if (block_spec) {
-	b = position/block_size;
-	dev = (dev_t) rip->i_zone[0];
+    b = position/block_size;
+    dev = (dev_t) rip->i_zone[0];
   } else {
-	b = read_map(rip, position);
-	dev = rip->i_dev;
+    b = read_map(rip, position);
+    dev = rip->i_dev;
   }
 
   if (!block_spec && b == NO_BLOCK) {
-	if (rw_flag == READING) {
-		/* Reading from a nonexistent block.  Must read as all zeros.*/
-		bp = get_block(NO_DEV, NO_BLOCK, NORMAL);    /* get a buffer */
-		zero_block(bp);
-	} else {
-		/* Writing to a nonexistent block. Create and enter in inode.*/
-		if ((bp= new_block(rip, position)) == NIL_BUF)return(err_code);
-	}
+    if (rw_flag == READING) {
+      /* Reading from a nonexistent block.  Must read as all zeros.*/
+      bp = get_block(NO_DEV, NO_BLOCK, NORMAL);    /* get a buffer */
+      zero_block(bp);
+    } else {
+      /* Writing to a nonexistent block. Create and enter in inode.*/
+      if ((bp= new_block(rip, position)) == NIL_BUF)return(err_code);
+    }
   } else if (rw_flag == READING) {
-	/* Read and read ahead if convenient. */
-	bp = rahead(rip, b, position, left);
+    /* Read and read ahead if convenient. */
+    bp = rahead(rip, b, position, left);
   } else {
-	/* Normally an existing block to be partially overwritten is first read
-	 * in.  However, a full block need not be read in.  If it is already in
-	 * the cache, acquire it, otherwise just acquire a free buffer.
-	 */
-	n = (chunk == block_size ? NO_READ : NORMAL);
-	if (!block_spec && off == 0 && position >= rip->i_size) n = NO_READ;
-	bp = get_block(dev, b, n);
+    /* Normally an existing block to be partially overwritten is first read
+    * in.  However, a full block need not be read in.  If it is already in
+    * the cache, acquire it, otherwise just acquire a free buffer.
+    */
+    n = (chunk == block_size ? NO_READ : NORMAL);
+    if (!block_spec && off == 0 && position >= rip->i_size) n = NO_READ;
+    bp = get_block(dev, b, n);
   }
 
   /* In all cases, bp now points to a valid buffer. */
@@ -314,16 +315,16 @@ int *completed;			/* number of bytes copied */
   }
 
   if (rw_flag == READING) {
-	/* Copy a chunk from the block buffer to user space. */
-	r = sys_vircopy(FS_PROC_NR, D, (phys_bytes) (bp->b_data+off),
-			usr, seg, (phys_bytes) buff,
-			(phys_bytes) chunk);
+    /* Copy a chunk from the block buffer to user space. */
+    r = sys_vircopy(FS_PROC_NR, D, (phys_bytes) (bp->b_data+off),
+        usr, seg, (phys_bytes) buff,
+        (phys_bytes) chunk);
   } else {
-	/* Copy a chunk from user space to the block buffer. */
-	r = sys_vircopy(usr, seg, (phys_bytes) buff,
-			FS_PROC_NR, D, (phys_bytes) (bp->b_data+off),
-			(phys_bytes) chunk);
-	bp->b_dirt = DIRTY;
+    /* Copy a chunk from user space to the block buffer. */
+    r = sys_vircopy(usr, seg, (phys_bytes) buff,
+        FS_PROC_NR, D, (phys_bytes) (bp->b_data+off),
+        (phys_bytes) chunk);
+    bp->b_dirt = DIRTY;
   }
   n = (off + chunk == block_size ? FULL_DATA_BLOCK : PARTIAL_DATA_BLOCK);
   put_block(bp, n);
@@ -335,13 +336,13 @@ int *completed;			/* number of bytes copied */
 /*===========================================================================*
  *				read_map				     *
  *===========================================================================*/
-PUBLIC block_t read_map(rip, position)
-register struct inode *rip;	/* ptr to inode to map from */
-off_t position;			/* position in file whose blk wanted */
+/* ptr to inode to map from */
+/* position in file whose blk wanted */
+PUBLIC block_t read_map(register struct inode *rip, off_t position)
 {
-/* Given an inode and a position within the corresponding file, locate the
- * block (not zone) number in which that position is to be found and return it.
- */
+  /* Given an inode and a position within the corresponding file, locate the
+   * block (not zone) number in which that position is to be found and return it.
+   */
 
   register struct buf *bp;
   register zone_t z;
@@ -358,29 +359,29 @@ off_t position;			/* position in file whose blk wanted */
 
   /* Is 'position' to be found in the inode itself? */
   if (zone < dzones) {
-	zind = (int) zone;	/* index should be an int */
-	z = rip->i_zone[zind];
-	if (z == NO_ZONE) return(NO_BLOCK);
-	b = ((block_t) z << scale) + boff;
-	return(b);
+    zind = (int) zone;	/* index should be an int */
+    z = rip->i_zone[zind];
+    if (z == NO_ZONE) return(NO_BLOCK);
+    b = ((block_t) z << scale) + boff;
+    return(b);
   }
 
   /* It is not in the inode, so it must be single or double indirect. */
   excess = zone - dzones;	/* first Vx_NR_DZONES don't count */
 
   if (excess < nr_indirects) {
-	/* 'position' can be located via the single indirect block. */
-	z = rip->i_zone[dzones];
+    /* 'position' can be located via the single indirect block. */
+    z = rip->i_zone[dzones];
   } else {
-	/* 'position' can be located via the double indirect block. */
-	if ( (z = rip->i_zone[dzones+1]) == NO_ZONE) return(NO_BLOCK);
-	excess -= nr_indirects;			/* single indir doesn't count*/
-	b = (block_t) z << scale;
-	bp = get_block(rip->i_dev, b, NORMAL);	/* get double indirect block */
-	index = (int) (excess/nr_indirects);
-	z = rd_indir(bp, index);		/* z= zone for single*/
-	put_block(bp, INDIRECT_BLOCK);		/* release double ind block */
-	excess = excess % nr_indirects;		/* index into single ind blk */
+    /* 'position' can be located via the double indirect block. */
+    if ( (z = rip->i_zone[dzones+1]) == NO_ZONE) return(NO_BLOCK);
+    excess -= nr_indirects;			/* single indir doesn't count*/
+    b = (block_t) z << scale;
+    bp = get_block(rip->i_dev, b, NORMAL);	/* get double indirect block */
+    index = (int) (excess/nr_indirects);
+    z = rd_indir(bp, index);		/* z= zone for single*/
+    put_block(bp, INDIRECT_BLOCK);		/* release double ind block */
+    excess = excess % nr_indirects;		/* index into single ind blk */
   }
 
   /* 'z' is zone num for single indirect block; 'excess' is index into it. */
@@ -398,9 +399,9 @@ off_t position;			/* position in file whose blk wanted */
 /*===========================================================================*
  *				rd_indir				     *
  *===========================================================================*/
-PUBLIC zone_t rd_indir(bp, index)
-struct buf *bp;			/* pointer to indirect block */
-int index;			/* index into *bp */
+/* pointer to indirect block */
+/* index into *bp */
+PUBLIC zone_t rd_indir(struct buf *bp, int index)
 {
 /* Given a pointer to an indirect block, read one entry.  The reason for
  * making a separate routine out of this is that there are four cases:
@@ -420,9 +421,9 @@ int index;			/* index into *bp */
 
   if (zone != NO_ZONE &&
 		(zone < (zone_t) sp->s_firstdatazone || zone >= sp->s_zones)) {
-	printf("Illegal zone number %ld in indirect block, index %d\n",
-	       (long) zone, index);
-	panic(__FILE__,"check file system", NO_NUM);
+    printf("Illegal zone number %ld in indirect block, index %d\n",
+          (long) zone, index);
+    panic(__FILE__,"check file system", NO_NUM);
   }
   return(zone);
 }
@@ -449,11 +450,11 @@ PUBLIC void read_ahead()
 /*===========================================================================*
  *				rahead					     *
  *===========================================================================*/
-PUBLIC struct buf *rahead(rip, baseblock, position, bytes_ahead)
-register struct inode *rip;	/* pointer to inode for file to be read */
-block_t baseblock;		/* block at current position */
-off_t position;			/* position within file */
-unsigned bytes_ahead;		/* bytes beyond position for immediate use */
+/* pointer to inode for file to be read */
+/* block at current position */
+/* position within file */
+/* bytes beyond position for immediate use */
+PUBLIC struct buf *rahead(register struct inode *rip, block_t baseblock, off_t position, unsigned bytes_ahead)
 {
 /* Fetch a block from the cache or the device.  If a physical read is
  * required, prefetch as many more blocks as convenient into the cache.
@@ -475,9 +476,9 @@ unsigned bytes_ahead;		/* bytes beyond position for immediate use */
 
   block_spec = (rip->i_mode & I_TYPE) == I_BLOCK_SPECIAL;
   if (block_spec) {
-	dev = (dev_t) rip->i_zone[0];
+	  dev = (dev_t) rip->i_zone[0];
   } else {
-	dev = rip->i_dev;
+	  dev = rip->i_dev;
   }
   block_size = get_block_size(dev);
 
@@ -512,19 +513,19 @@ unsigned bytes_ahead;		/* bytes beyond position for immediate use */
   blocks_ahead = (bytes_ahead + block_size - 1) / block_size;
 
   if (block_spec && rip->i_size == 0) {
-	blocks_left = NR_IOREQS;
+	  blocks_left = NR_IOREQS;
   } else {
-	blocks_left = (rip->i_size - position + block_size - 1) / block_size;
+    blocks_left = (rip->i_size - position + block_size - 1) / block_size;
 
-	/* Go for the first indirect block if we are in its neighborhood. */
-	if (!block_spec) {
-		scale = rip->i_sp->s_log_zone_size;
-		ind1_pos = (off_t) rip->i_ndzones * (block_size << scale);
-		if (position <= ind1_pos && rip->i_size > ind1_pos) {
-			blocks_ahead++;
-			blocks_left++;
-		}
-	}
+    /* Go for the first indirect block if we are in its neighborhood. */
+    if (!block_spec) {
+      scale = rip->i_sp->s_log_zone_size;
+      ind1_pos = (off_t) rip->i_ndzones * (block_size << scale);
+      if (position <= ind1_pos && rip->i_size > ind1_pos) {
+        blocks_ahead++;
+        blocks_left++;
+      }
+    }
   }
 
   /* No more than the maximum request. */
@@ -541,21 +542,21 @@ unsigned bytes_ahead;		/* bytes beyond position for immediate use */
 
   /* Acquire block buffers. */
   for (;;) {
-	read_q[read_q_size++] = bp;
+    read_q[read_q_size++] = bp;
 
-	if (--blocks_ahead == 0) break;
+    if (--blocks_ahead == 0) break;
 
-	/* Don't trash the cache, leave 4 free. */
-	if (bufs_in_use >= NR_BUFS - 4) break;
+    /* Don't trash the cache, leave 4 free. */
+    if (bufs_in_use >= NR_BUFS - 4) break;
 
-	block++;
+    block++;
 
-	bp = get_block(dev, block, PREFETCH);
-	if (bp->b_dev != NO_DEV) {
-		/* Oops, block already in the cache, get out. */
-		put_block(bp, FULL_DATA_BLOCK);
-		break;
-	}
+    bp = get_block(dev, block, PREFETCH);
+    if (bp->b_dev != NO_DEV) {
+      /* Oops, block already in the cache, get out. */
+      put_block(bp, FULL_DATA_BLOCK);
+      break;
+    }
   }
   rw_scattered(dev, read_q, read_q_size, READING);
   return(get_block(dev, baseblock, NORMAL));

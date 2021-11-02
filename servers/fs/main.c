@@ -157,9 +157,9 @@ PRIVATE void buf_pool(void)
 /*===========================================================================*
  *				reply					     *
  *===========================================================================*/
-PUBLIC void reply(whom, result)
-int whom;			/* process to reply to */
-int result;			/* result of the call (usually OK or error #) */
+/* process to reply to */
+/* result of the call (usually OK or error #) */
+PUBLIC void reply(int whom, int result)
 {
 /* Send a reply to a user process. It may fail (if the process has just
  * been killed by a signal), so don't check the return code.  If the send
@@ -239,9 +239,7 @@ PRIVATE void fs_init()
 /*===========================================================================*
  *				igetenv					     *
  *===========================================================================*/
-PRIVATE int igetenv(key, optional)
-char *key;
-int optional;
+PRIVATE int igetenv(char *key, int optional)
 {
 /* Ask kernel for an integer valued boot environment variable. */
   char value[64];
@@ -424,8 +422,8 @@ PRIVATE void load_ram(void)
 /*===========================================================================*
  *				load_super				     *
  *===========================================================================*/
-PRIVATE void load_super(super_dev)
-dev_t super_dev;			/* place to get superblock from */
+/* place to get superblock from */
+PRIVATE void load_super(dev_t super_dev)
 {
   int bad;
   register struct super_block *sp;

@@ -41,10 +41,10 @@ PUBLIC time_t clock_time()
 /*===========================================================================*
  *				fetch_name				     *
  *===========================================================================*/
-PUBLIC int fetch_name(path, len, flag)
-char *path;			/* pointer to the path in user space */
-int len;			/* path length, including 0 byte */
-int flag;			/* M3 means path may be in message */
+/* pointer to the path in user space */
+/* path length, including 0 byte */
+/* M3 means path may be in message */
+PUBLIC int fetch_name(char *path, int len, int flag)
 {
 /* Go get path and put it in 'user_path'.
  * If 'flag' = M3 and 'len' <= M3_STRING, the path is present in 'message'.
@@ -55,25 +55,25 @@ int flag;			/* M3 means path may be in message */
 
   /* Check name length for validity. */
   if (len <= 0) {
-	err_code = EINVAL;
-	return(EGENERIC);
+    err_code = EINVAL;
+    return(EGENERIC);
   }
 
   if (len > PATH_MAX) {
-	err_code = ENAMETOOLONG;
-	return(EGENERIC);
+    err_code = ENAMETOOLONG;
+    return(EGENERIC);
   }
 
   if (flag == M3 && len <= M3_STRING) {
-	/* Just copy the path from the message to 'user_path'. */
-	rpu = &user_path[0];
-	rpm = m_in.pathname;		/* contained in input message */
-	do { *rpu++ = *rpm++; } while (--len);
-	r = OK;
+    /* Just copy the path from the message to 'user_path'. */
+    rpu = &user_path[0];
+    rpm = m_in.pathname;		/* contained in input message */
+    do { *rpu++ = *rpm++; } while (--len);
+    r = OK;
   } else {
-	/* String is not contained in the message.  Get it from user space. */
-	r = sys_datacopy(who, (vir_bytes) path,
-		FS_PROC_NR, (vir_bytes) user_path, (phys_bytes) len);
+    /* String is not contained in the message.  Get it from user space. */
+    r = sys_datacopy(who, (vir_bytes) path,
+      FS_PROC_NR, (vir_bytes) user_path, (phys_bytes) len);
   }
   return(r);
 }
@@ -90,10 +90,10 @@ PUBLIC int no_sys()
 /*===========================================================================*
  *				panic					     *
  *===========================================================================*/
-PUBLIC void panic(who, mess, num)
-char *who;			/* who caused the panic */
-char *mess;			/* panic message string */
-int num;			/* number to go with it */
+/* who caused the panic */
+/* panic message string */
+/* number to go with it */
+PUBLIC void panic(char *who, char *mess, int num)
 {
 /* Something awful has happened.  Panics are caused when an internal
  * inconsistency is detected, e.g., a programming error or illegal value of a
@@ -111,9 +111,9 @@ int num;			/* number to go with it */
 /*===========================================================================*
  *				conv2					     *
  *===========================================================================*/
-PUBLIC unsigned conv2(norm, w)
-int norm;			/* TRUE if no swap, FALSE for byte swap */
-int w;				/* promotion of 16-bit word to be swapped */
+/* TRUE if no swap, FALSE for byte swap */
+/* promotion of 16-bit word to be swapped */
+PUBLIC unsigned conv2(int norm, int w)
 {
 /* Possibly swap a 16-bit word between 8086 and 68000 byte order. */
   if (norm) return( (unsigned) w & 0xFFFF);
@@ -123,9 +123,9 @@ int w;				/* promotion of 16-bit word to be swapped */
 /*===========================================================================*
  *				conv4					     *
  *===========================================================================*/
-PUBLIC long conv4(norm, x)
-int norm;			/* TRUE if no swap, FALSE for byte swap */
-long x;				/* 32-bit long to be byte swapped */
+/* TRUE if no swap, FALSE for byte swap */
+/* 32-bit long to be byte swapped */
+PUBLIC long conv4(int norm, long x)
 {
 /* Possibly swap a 32-bit long between 8086 and 68000 byte order. */
   unsigned lo, hi;

@@ -119,9 +119,9 @@ PUBLIC int do_pm_exit()
 /*===========================================================================*
  *				pm_exit					     *
  *===========================================================================*/
-PUBLIC void pm_exit(rmp, exit_status)
-register struct mproc *rmp;	/* pointer to the process to be terminated */
-int exit_status;		/* the process' exit status (for parent) */
+/* pointer to the process to be terminated */
+/* the process' exit status (for parent) */
+PUBLIC void pm_exit(register struct mproc *rmp, int exit_status)
 {
 /* A process is done.  Release most of the process' possessions.  If its
  * parent is waiting, release the rest, else keep the process slot and
@@ -156,8 +156,8 @@ int exit_status;		/* the process' exit status (for parent) */
   
   /* Release the memory occupied by the child. */
   if (find_share(rmp, rmp->mp_ino, rmp->mp_dev, rmp->mp_ctime) == NULL) {
-	/* No other process shares the text segment, so free it. */
-	free_mem(rmp->mp_seg[T].mem_phys, rmp->mp_seg[T].mem_len);
+    /* No other process shares the text segment, so free it. */
+    free_mem(rmp->mp_seg[T].mem_phys, rmp->mp_seg[T].mem_len);
   }
   /* Free the data and stack segments. */
   free_mem(rmp->mp_seg[D].mem_phys,
@@ -173,20 +173,20 @@ int exit_status;		/* the process' exit status (for parent) */
 	(pidarg == -1 || pidarg == rmp->mp_pid || -pidarg == rmp->mp_procgrp);
 
   if (parent_waiting && right_child) {
-	cleanup(rmp);			/* tell parent and release child slot */
+	  cleanup(rmp);			/* tell parent and release child slot */
   } else {
-	rmp->mp_flags = IN_USE|ZOMBIE;	/* parent not waiting, zombify child */
-	sig_proc(p_mp, SIGCHLD);	/* send parent a "child died" signal */
+    rmp->mp_flags = IN_USE|ZOMBIE;	/* parent not waiting, zombify child */
+    sig_proc(p_mp, SIGCHLD);	/* send parent a "child died" signal */
   }
 
   /* If the process has children, disinherit them.  INIT is the new parent. */
   for (rmp = &mproc[0]; rmp < &mproc[NR_PROCS]; rmp++) {
-	if (rmp->mp_flags & IN_USE && rmp->mp_parent == proc_nr) {
-		/* 'rmp' now points to a child to be disinherited. */
-		rmp->mp_parent = INIT_PROC_NR;
-		parent_waiting = mproc[INIT_PROC_NR].mp_flags & WAITING;
-		if (parent_waiting && (rmp->mp_flags & ZOMBIE)) cleanup(rmp);
-	}
+    if (rmp->mp_flags & IN_USE && rmp->mp_parent == proc_nr) {
+      /* 'rmp' now points to a child to be disinherited. */
+      rmp->mp_parent = INIT_PROC_NR;
+      parent_waiting = mproc[INIT_PROC_NR].mp_flags & WAITING;
+      if (parent_waiting && (rmp->mp_flags & ZOMBIE)) cleanup(rmp);
+    }
   }
 
   /* Send a hangup to the process' process group if it was a session leader. */
@@ -222,44 +222,44 @@ PUBLIC int do_waitpid()
    */
   children = 0;
   for (rp = &mproc[0]; rp < &mproc[NR_PROCS]; rp++) {
-	if ( (rp->mp_flags & IN_USE) && rp->mp_parent == who) {
-		/* The value of pidarg determines which children qualify. */
-		if (pidarg  > 0 && pidarg != rp->mp_pid) continue;
-		if (pidarg < -1 && -pidarg != rp->mp_procgrp) continue;
+    if ( (rp->mp_flags & IN_USE) && rp->mp_parent == who) {
+      /* The value of pidarg determines which children qualify. */
+      if (pidarg  > 0 && pidarg != rp->mp_pid) continue;
+      if (pidarg < -1 && -pidarg != rp->mp_procgrp) continue;
 
-		children++;		/* this child is acceptable */
-		if (rp->mp_flags & ZOMBIE) {
-			/* This child meets the pid test and has exited. */
-			cleanup(rp);	/* this child has already exited */
-			return(SUSPEND);
-		}
-		if ((rp->mp_flags & STOPPED) && rp->mp_sigstatus) {
-			/* This child meets the pid test and is being traced.*/
-			mp->mp_reply.reply_res2 = 0177|(rp->mp_sigstatus << 8);
-			rp->mp_sigstatus = 0;
-			return(rp->mp_pid);
-		}
-	}
+      children++;		/* this child is acceptable */
+      if (rp->mp_flags & ZOMBIE) {
+        /* This child meets the pid test and has exited. */
+        cleanup(rp);	/* this child has already exited */
+        return(SUSPEND);
+      }
+      if ((rp->mp_flags & STOPPED) && rp->mp_sigstatus) {
+        /* This child meets the pid test and is being traced.*/
+        mp->mp_reply.reply_res2 = 0177|(rp->mp_sigstatus << 8);
+        rp->mp_sigstatus = 0;
+        return(rp->mp_pid);
+      }
+    }
   }
 
   /* No qualifying child has exited.  Wait for one, unless none exists. */
   if (children > 0) {
-	/* At least 1 child meets the pid test exists, but has not exited. */
-	if (options & WNOHANG) return(0);    /* parent does not want to wait */
-	mp->mp_flags |= WAITING;	     /* parent wants to wait */
-	mp->mp_wpid = (pid_t) pidarg;	     /* save pid for later */
-	return(SUSPEND);		     /* do not reply, let it wait */
+    /* At least 1 child meets the pid test exists, but has not exited. */
+    if (options & WNOHANG) return(0);    /* parent does not want to wait */
+    mp->mp_flags |= WAITING;	     /* parent wants to wait */
+    mp->mp_wpid = (pid_t) pidarg;	     /* save pid for later */
+    return(SUSPEND);		     /* do not reply, let it wait */
   } else {
-	/* No child even meets the pid test.  Return error immediately. */
-	return(ECHILD);			     /* no - parent has no children */
+    /* No child even meets the pid test.  Return error immediately. */
+    return(ECHILD);			     /* no - parent has no children */
   }
 }
 
 /*===========================================================================*
  *				cleanup					     *
  *===========================================================================*/
-PRIVATE void cleanup(child)
-register struct mproc *child;	/* tells which process is exiting */
+/* tells which process is exiting */
+PRIVATE void cleanup(register struct mproc *child)
 {
 /* Finish off the exit of a process.  The process has exited or been killed
  * by a signal, and its parent is waiting.
@@ -280,4 +280,3 @@ register struct mproc *child;	/* tells which process is exiting */
   child->mp_child_stime = 0;
   procs_in_use--;
 }
-

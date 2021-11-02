@@ -88,17 +88,17 @@ PUBLIC int do_exec()
   r = 0;	/* r = 0 (first attempt), or 1 (interpreted script) */
   name = name_buf;	/* name of file to exec. */
   do {
-	s_p = &s_buf[r];
-	tell_fs(CHDIR, who, FALSE, 0);  /* switch to the user's FS environ */
-	fd = allowed(name, s_p, X_BIT);	/* is file executable? */
-	if (fd < 0)  return(fd);		/* file was not executable */
+    s_p = &s_buf[r];
+    tell_fs(CHDIR, who, FALSE, 0);  /* switch to the user's FS environ */
+    fd = allowed(name, s_p, X_BIT);	/* is file executable? */
+    if (fd < 0)  return(fd);		/* file was not executable */
 
-	/* Read the file header and extract the segment sizes. */
-	sc = (stk_bytes + CLICK_SIZE - 1) >> CLICK_SHIFT;
+    /* Read the file header and extract the segment sizes. */
+    sc = (stk_bytes + CLICK_SIZE - 1) >> CLICK_SHIFT;
 
-	m = read_header(fd, &ft, &text_bytes, &data_bytes, &bss_bytes, 
-					&tot_bytes, &sym_bytes, sc, &pc);
-	if (m != ESCRIPT || ++r > 1) break;
+    m = read_header(fd, &ft, &text_bytes, &data_bytes, &bss_bytes, 
+            &tot_bytes, &sym_bytes, sc, &pc);
+    if (m != ESCRIPT || ++r > 1) break;
   } while ((name = patch_stack(fd, mbuf, &stk_bytes, name_buf)) != NULL);
 
   if (m < 0) {
@@ -112,8 +112,8 @@ PUBLIC int do_exec()
   /* Allocate new memory and release old memory.  Fix map and tell kernel. */
   r = new_mem(sh_mp, text_bytes, data_bytes, bss_bytes, stk_bytes, tot_bytes);
   if (r != OK) {
-	close(fd);		/* insufficient core or program too big */
-	return(r);
+    close(fd);		/* insufficient core or program too big */
+    return(r);
   }
 
   /* Save file identification to allow it to be shared. */
@@ -133,9 +133,9 @@ PUBLIC int do_exec()
 
   /* Read in text and data segments. */
   if (sh_mp != NULL) {
-	lseek(fd, (off_t) text_bytes, SEEK_CUR);  /* shared: skip text */
+	  lseek(fd, (off_t) text_bytes, SEEK_CUR);  /* shared: skip text */
   } else {
-	rw_seg(0, fd, who, T, text_bytes);
+	  rw_seg(0, fd, who, T, text_bytes);
   }
   rw_seg(0, fd, who, D, data_bytes);
 
@@ -143,14 +143,14 @@ PUBLIC int do_exec()
 
   /* Take care of setuid/setgid bits. */
   if ((rmp->mp_flags & TRACED) == 0) { /* suppress if tracing */
-	if (s_buf[0].st_mode & I_SET_UID_BIT) {
-		rmp->mp_effuid = s_buf[0].st_uid;
-		tell_fs(SETUID,who, (int)rmp->mp_realuid, (int)rmp->mp_effuid);
-	}
-	if (s_buf[0].st_mode & I_SET_GID_BIT) {
-		rmp->mp_effgid = s_buf[0].st_gid;
-		tell_fs(SETGID,who, (int)rmp->mp_realgid, (int)rmp->mp_effgid);
-	}
+    if (s_buf[0].st_mode & I_SET_UID_BIT) {
+      rmp->mp_effuid = s_buf[0].st_uid;
+      tell_fs(SETUID,who, (int)rmp->mp_realuid, (int)rmp->mp_effuid);
+    }
+    if (s_buf[0].st_mode & I_SET_GID_BIT) {
+      rmp->mp_effgid = s_buf[0].st_gid;
+      tell_fs(SETGID,who, (int)rmp->mp_realgid, (int)rmp->mp_effgid);
+    }
   }
 
   /* Save offset to initial argc (for ps) */
@@ -158,11 +158,11 @@ PUBLIC int do_exec()
 
   /* Fix 'mproc' fields, tell kernel that exec is done,  reset caught sigs. */
   for (sn = 1; sn <= _NSIG; sn++) {
-	if (sigismember(&rmp->mp_catch, sn)) {
-		sigdelset(&rmp->mp_catch, sn);
-		rmp->mp_sigact[sn].sa_handler = SIG_DFL;
-		sigemptyset(&rmp->mp_sigact[sn].sa_mask);
-	}
+    if (sigismember(&rmp->mp_catch, sn)) {
+      sigdelset(&rmp->mp_catch, sn);
+      rmp->mp_sigact[sn].sa_handler = SIG_DFL;
+      sigemptyset(&rmp->mp_sigact[sn].sa_mask);
+    }
   }
 
   rmp->mp_flags &= ~SEPARATE;	/* turn off SEPARATE bit */
@@ -187,17 +187,17 @@ PUBLIC int do_exec()
 /*===========================================================================*
  *				read_header				     *
  *===========================================================================*/
-PRIVATE int read_header(fd, ft, text_bytes, data_bytes, bss_bytes, 
-						tot_bytes, sym_bytes, sc, pc)
-int fd;				/* file descriptor for reading exec file */
-int *ft;			/* place to return ft number */
-vir_bytes *text_bytes;		/* place to return text size */
-vir_bytes *data_bytes;		/* place to return initialized data size */
-vir_bytes *bss_bytes;		/* place to return bss size */
-phys_bytes *tot_bytes;		/* place to return total size */
-long *sym_bytes;		/* place to return symbol table size */
-vir_clicks sc;			/* stack size in clicks */
-vir_bytes *pc;			/* program entry point (initial PC) */
+/* file descriptor for reading exec file */
+/* place to return ft number */
+/* place to return text size */
+/* place to return initialized data size */
+/* place to return bss size */
+/* place to return total size */
+/* place to return symbol table size */
+/* stack size in clicks */
+/* program entry point (initial PC) */
+PRIVATE int read_header(int fd, int *ft, vir_bytes *text_bytes, vir_bytes *data_bytes, vir_bytes *bss_bytes, 
+						phys_bytes *tot_bytes, long *sym_bytes, vir_clicks sc, vir_bytes *pc)
 {
 /* Read the header and extract the text, data, bss and total sizes from it. */
 
@@ -256,9 +256,9 @@ vir_bytes *pc;			/* program entry point (initial PC) */
   if (*tot_bytes == 0) return(ENOEXEC);
 
   if (*ft != SEPARATE) {
-	/* If I & D space is not separated, it is all considered data. Text=0*/
-	*data_bytes += *text_bytes;
-	*text_bytes = 0;
+    /* If I & D space is not separated, it is all considered data. Text=0*/
+    *data_bytes += *text_bytes;
+    *text_bytes = 0;
   }
   *pc = hdr.a_entry;	/* initial address to start execution */
 
@@ -278,14 +278,14 @@ vir_bytes *pc;			/* program entry point (initial PC) */
 /*===========================================================================*
  *				new_mem					     *
  *===========================================================================*/
-PRIVATE int new_mem(sh_mp, text_bytes, data_bytes,
-	bss_bytes,stk_bytes,tot_bytes)
-struct mproc *sh_mp;		/* text can be shared with this process */
-vir_bytes text_bytes;		/* text segment size in bytes */
-vir_bytes data_bytes;		/* size of initialized data in bytes */
-vir_bytes bss_bytes;		/* size of bss in bytes */
-vir_bytes stk_bytes;		/* size of initial stack segment in bytes */
-phys_bytes tot_bytes;		/* total memory to allocate, including gap */
+/* text can be shared with this process */
+/* text segment size in bytes */
+/* size of initialized data in bytes */
+/* size of bss in bytes */
+/* size of initial stack segment in bytes */
+/* total memory to allocate, including gap */
+PRIVATE int new_mem(struct mproc *sh_mp, vir_bytes text_bytes, vir_bytes data_bytes,
+	vir_bytes bss_bytes,vir_bytes stk_bytes,phys_bytes tot_bytes)
 {
 /* Allocate new memory and release the old memory.  Change the map and report
  * the new map to the kernel.  Zero the new core image's bss, gap and stack.
@@ -324,8 +324,8 @@ phys_bytes tot_bytes;		/* total memory to allocate, including gap */
   rmp = mp;
 
   if (find_share(rmp, rmp->mp_ino, rmp->mp_dev, rmp->mp_ctime) == NULL) {
-	/* No other process shares the text segment, so free it. */
-	free_mem(rmp->mp_seg[T].mem_phys, rmp->mp_seg[T].mem_len);
+    /* No other process shares the text segment, so free it. */
+    free_mem(rmp->mp_seg[T].mem_phys, rmp->mp_seg[T].mem_len);
   }
   /* Free the data and stack segments. */
   free_mem(rmp->mp_seg[D].mem_phys,
@@ -336,12 +336,12 @@ phys_bytes tot_bytes;		/* total memory to allocate, including gap */
    * and report new map.
    */
   if (sh_mp != NULL) {
-	/* Share the text segment. */
-	rmp->mp_seg[T] = sh_mp->mp_seg[T];
+    /* Share the text segment. */
+    rmp->mp_seg[T] = sh_mp->mp_seg[T];
   } else {
-	rmp->mp_seg[T].mem_phys = new_base;
-	rmp->mp_seg[T].mem_vir = 0;
-	rmp->mp_seg[T].mem_len = text_clicks;
+    rmp->mp_seg[T].mem_phys = new_base;
+    rmp->mp_seg[T].mem_vir = 0;
+    rmp->mp_seg[T].mem_len = text_clicks;
   }
   rmp->mp_seg[D].mem_phys = new_base + text_clicks;
   rmp->mp_seg[D].mem_vir = 0;
@@ -363,7 +363,7 @@ phys_bytes tot_bytes;		/* total memory to allocate, including gap */
   bytes -= bss_offset;
 
   if ((s=sys_memset(0, base, bytes)) != OK) {
-	panic(__FILE__,"new_mem can't zero", s);
+	  panic(__FILE__,"new_mem can't zero", s);
   }
 
   return(OK);
@@ -372,9 +372,9 @@ phys_bytes tot_bytes;		/* total memory to allocate, including gap */
 /*===========================================================================*
  *				patch_ptr				     *
  *===========================================================================*/
-PRIVATE void patch_ptr(stack, base)
-char stack[ARG_MAX];		/* pointer to stack image within PM */
-vir_bytes base;			/* virtual address of stack base inside user */
+/* pointer to stack image within PM */
+/* virtual address of stack base inside user */
+PRIVATE void patch_ptr(char stack[ARG_MAX], vir_bytes base)
 {
 /* When doing an exec(name, argv, envp) call, the user builds up a stack
  * image with arg and env pointers relative to the start of the stack.  Now
@@ -389,26 +389,25 @@ vir_bytes base;			/* virtual address of stack base inside user */
   ap = (char **) stack;		/* points initially to 'nargs' */
   ap++;				/* now points to argv[0] */
   while (flag < 2) {
-	if (ap >= (char **) &stack[ARG_MAX]) return;	/* too bad */
-	if (*ap != NULL) {
-		v = (vir_bytes) *ap;	/* v is relative pointer */
-		v += base;		/* relocate it */
-		*ap = (char *) v;	/* put it back */
-	} else {
-		flag++;
-	}
-	ap++;
+    if (ap >= (char **) &stack[ARG_MAX]) return;	/* too bad */
+    if (*ap != NULL) {
+      v = (vir_bytes) *ap;	/* v is relative pointer */
+      v += base;		/* relocate it */
+      *ap = (char *) v;	/* put it back */
+    } else {
+      flag++;
+    }
+    ap++;
   }
 }
 
 /*===========================================================================*
  *				insert_arg				     *
  *===========================================================================*/
-PRIVATE int insert_arg(stack, stk_bytes, arg, replace)
-char stack[ARG_MAX];		/* pointer to stack image within PM */
-vir_bytes *stk_bytes;		/* size of initial stack */
-char *arg;			/* argument to prepend/replace as new argv[0] */
-int replace;
+/* pointer to stack image within PM */
+/* size of initial stack */
+/* argument to prepend/replace as new argv[0] */
+PRIVATE int insert_arg(char stack[ARG_MAX], vir_bytes *stk_bytes, char *arg, int replace)
 {
 /* Patch the stack so that arg will become argv[0].  Be careful, the stack may
  * be filled with garbage, although it normally looks like this:
@@ -427,14 +426,14 @@ int replace;
 
   a1 = a0;			/* a1 will point to the strings to be moved */
   if (replace) {
-	/* Move a1 to the end of argv[0][] (argv[1] if nargs > 1). */
-	do {
-		if (a1 == old_bytes) return(FALSE);
-		--offset;
-	} while (stack[a1++] != 0);
+    /* Move a1 to the end of argv[0][] (argv[1] if nargs > 1). */
+    do {
+      if (a1 == old_bytes) return(FALSE);
+      --offset;
+    } while (stack[a1++] != 0);
   } else {
-	offset += PTRSIZE;	/* new argv[0] needs new pointer in argv[] */
-	a0 += PTRSIZE;		/* location of new argv[0][]. */
+    offset += PTRSIZE;	/* new argv[0] needs new pointer in argv[] */
+    a0 += PTRSIZE;		/* location of new argv[0][]. */
   }
 
   /* stack will grow by offset bytes (or shrink by -offset bytes) */
@@ -446,10 +445,10 @@ int replace;
   strcpy(stack + a0, arg);	/* Put arg in the new space. */
 
   if (!replace) {
-	/* Make space for a new argv[0]. */
-	memmove(stack + 2 * PTRSIZE, stack + 1 * PTRSIZE, a0 - 2 * PTRSIZE);
+    /* Make space for a new argv[0]. */
+    memmove(stack + 2 * PTRSIZE, stack + 1 * PTRSIZE, a0 - 2 * PTRSIZE);
 
-	((char **) stack)[0]++;	/* nargs++; */
+    ((char **) stack)[0]++;	/* nargs++; */
   }
   /* Now patch up argv[] and envp[] by offset. */
   patch_ptr(stack, (vir_bytes) offset);
@@ -460,11 +459,11 @@ int replace;
 /*===========================================================================*
  *				patch_stack				     *
  *===========================================================================*/
-PRIVATE char *patch_stack(fd, stack, stk_bytes, script)
-int fd;				/* file descriptor to open script file */
-char stack[ARG_MAX];		/* pointer to stack image within PM */
-vir_bytes *stk_bytes;		/* size of initial stack */
-char *script;			/* name of script to interpret */
+/* file descriptor to open script file */
+/* pointer to stack image within PM */
+/* size of initial stack */
+/* name of script to interpret */
+PRIVATE char *patch_stack(int fd, char stack[ARG_MAX], vir_bytes *stk_bytes, char *script)
 {
 /* Patch the argument vector to include the path name of the script to be
  * interpreted, and all strings on the #! line.  Returns the path name of
@@ -484,16 +483,16 @@ char *script;			/* name of script to interpret */
 
   /* Move sp backwards through script[], prepending each string to stack. */
   for (;;) {
-	/* skip spaces behind argument. */
-	while (sp > script && (*--sp == ' ' || *sp == '\t')) {}
-	if (sp == script) break;
+    /* skip spaces behind argument. */
+    while (sp > script && (*--sp == ' ' || *sp == '\t')) {}
+    if (sp == script) break;
 
-	sp[1] = 0;
-	/* Move to the start of the argument. */
-	while (sp > script && sp[-1] != ' ' && sp[-1] != '\t') --sp;
+    sp[1] = 0;
+    /* Move to the start of the argument. */
+    while (sp > script && sp[-1] != ' ' && sp[-1] != '\t') --sp;
 
-	interp = sp;
-	if (!insert_arg(stack, stk_bytes, sp, INSERT)) return(NULL);
+    interp = sp;
+    if (!insert_arg(stack, stk_bytes, sp, INSERT)) return(NULL);
   }
 
   /* Round *stk_bytes up to the size of a pointer for alignment contraints. */
@@ -506,12 +505,12 @@ char *script;			/* name of script to interpret */
 /*===========================================================================*
  *				rw_seg					     *
  *===========================================================================*/
-PUBLIC void rw_seg(rw, fd, proc, seg, seg_bytes0)
-int rw;				/* 0 = read, 1 = write */
-int fd;				/* file descriptor to read from / write to */
-int proc;			/* process number */
-int seg;			/* T, D, or S */
-phys_bytes seg_bytes0;		/* how much is to be transferred? */
+/* 0 = read, 1 = write */
+/* file descriptor to read from / write to */
+/* process number */
+/* T, D, or S */
+/* how much is to be transferred? */
+PUBLIC void rw_seg(int rw, int fd, int proc, int seg, phys_bytes seg_bytes0)
 {
 /* Transfer text or data from/to a file and copy to/from a process segment.
  * This procedure is a little bit tricky.  The logical way to transfer a
@@ -539,26 +538,24 @@ phys_bytes seg_bytes0;		/* how much is to be transferred? */
 
   while (seg_bytes != 0) {
 #define PM_CHUNK_SIZE 8192
-	bytes = MIN((INT_MAX / PM_CHUNK_SIZE) * PM_CHUNK_SIZE, seg_bytes);
-	if (rw == 0) {
-		r = read(new_fd, ubuf_ptr, bytes);
-	} else {
-		r = write(new_fd, ubuf_ptr, bytes);
-	}
-	if (r != bytes) break;
-	ubuf_ptr += bytes;
-	seg_bytes -= bytes;
+    bytes = MIN((INT_MAX / PM_CHUNK_SIZE) * PM_CHUNK_SIZE, seg_bytes);
+    if (rw == 0) {
+      r = read(new_fd, ubuf_ptr, bytes);
+    } else {
+      r = write(new_fd, ubuf_ptr, bytes);
+    }
+    if (r != bytes) break;
+    ubuf_ptr += bytes;
+    seg_bytes -= bytes;
   }
 }
 
 /*===========================================================================*
  *				find_share				     *
  *===========================================================================*/
-PUBLIC struct mproc *find_share(mp_ign, ino, dev, ctime)
-struct mproc *mp_ign;		/* process that should not be looked at */
-ino_t ino;			/* parameters that uniquely identify a file */
-dev_t dev;
-time_t ctime;
+/* process that should not be looked at */
+/* parameters that uniquely identify a file */
+PUBLIC struct mproc *find_share(struct mproc *mp_ign, ino_t ino, dev_t dev, time_t ctime)
 {
 /* Look for a process that is the file <ino, dev, ctime> in execution.  Don't
  * accidentally "find" mp_ign, because it is the process on whose behalf this
@@ -566,13 +563,12 @@ time_t ctime;
  */
   struct mproc *sh_mp;
   for (sh_mp = &mproc[0]; sh_mp < &mproc[NR_PROCS]; sh_mp++) {
-
-	if (!(sh_mp->mp_flags & SEPARATE)) continue;
-	if (sh_mp == mp_ign) continue;
-	if (sh_mp->mp_ino != ino) continue;
-	if (sh_mp->mp_dev != dev) continue;
-	if (sh_mp->mp_ctime != ctime) continue;
-	return sh_mp;
+    if (!(sh_mp->mp_flags & SEPARATE)) continue;
+    if (sh_mp == mp_ign) continue;
+    if (sh_mp->mp_ino != ino) continue;
+    if (sh_mp->mp_dev != dev) continue;
+    if (sh_mp->mp_ctime != ctime) continue;
+    return sh_mp;
   }
   return(NULL);
 }

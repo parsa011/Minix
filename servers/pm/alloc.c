@@ -45,8 +45,8 @@ FORWARD _PROTOTYPE( void merge, (struct hole *hp)			    );
 /*===========================================================================*
  *				alloc_mem				     *
  *===========================================================================*/
-PUBLIC phys_clicks alloc_mem(clicks)
-phys_clicks clicks;		/* amount of memory requested */
+/* amount of memory requested */
+PUBLIC phys_clicks alloc_mem(phys_clicks clicks)
 {
 /* Allocate a block of memory from the free list using first fit. The block
  * consists of a sequence of contiguous bytes, whose length in clicks is
@@ -84,9 +84,9 @@ phys_clicks clicks;		/* amount of memory requested */
 /*===========================================================================*
  *				free_mem				     *
  *===========================================================================*/
-PUBLIC void free_mem(base, clicks)
-phys_clicks base;		/* base address of block to free */
-phys_clicks clicks;		/* number of clicks to free */
+/* base address of block to free */
+/* number of clicks to free */
+PUBLIC void free_mem(phys_clicks base, phys_clicks clicks)
 {
 /* Return a block of free memory to the hole list.  The parameters tell where
  * the block starts in physical memory and how big it is.  The block is added
@@ -96,7 +96,7 @@ phys_clicks clicks;		/* number of clicks to free */
   register struct hole *hp, *new_ptr, *prev_ptr;
 
   if (clicks == 0) return;
-  if ( (new_ptr = free_slots) == NIL_HOLE) 
+  if ( (new_ptr = free_slots) == NIL_HOLE)
   	panic(__FILE__,"hole table full", NO_NUM);
   new_ptr->h_base = base;
   new_ptr->h_len = clicks;
@@ -108,18 +108,18 @@ phys_clicks clicks;		/* number of clicks to free */
    * front of the hole list.
    */
   if (hp == NIL_HOLE || base <= hp->h_base) {
-	/* Block to be freed goes on front of the hole list. */
-	new_ptr->h_next = hp;
-	hole_head = new_ptr;
-	merge(new_ptr);
-	return;
+    /* Block to be freed goes on front of the hole list. */
+    new_ptr->h_next = hp;
+    hole_head = new_ptr;
+    merge(new_ptr);
+    return;
   }
 
   /* Block to be returned does not go on front of hole list. */
   prev_ptr = NIL_HOLE;
   while (hp != NIL_HOLE && base > hp->h_base) {
-	prev_ptr = hp;
-	hp = hp->h_next;
+    prev_ptr = hp;
+    hp = hp->h_next;
   }
 
   /* We found where it goes.  Insert block after 'prev_ptr'. */
@@ -131,11 +131,9 @@ phys_clicks clicks;		/* number of clicks to free */
 /*===========================================================================*
  *				del_slot				     *
  *===========================================================================*/
-PRIVATE void del_slot(prev_ptr, hp)
 /* pointer to hole entry just ahead of 'hp' */
-register struct hole *prev_ptr;
 /* pointer to hole entry to be removed */
-register struct hole *hp;	
+PRIVATE void del_slot(register struct hole *prev_ptr, register struct hole *hp)
 {
 /* Remove an entry from the hole list.  This procedure is called when a
  * request to allocate memory removes a hole in its entirety, thus reducing
@@ -154,8 +152,8 @@ register struct hole *hp;
 /*===========================================================================*
  *				merge					     *
  *===========================================================================*/
-PRIVATE void merge(hp)
-register struct hole *hp;	/* ptr to hole to merge with its successors */
+/* ptr to hole to merge with its successors */
+PRIVATE void merge(register struct hole *hp)
 {
 /* Check for contiguous holes and merge any found.  Contiguous holes can occur
  * when a block of memory is freed, and it happens to abut another hole on
@@ -169,10 +167,10 @@ register struct hole *hp;	/* ptr to hole to merge with its successors */
    */
   if ( (next_ptr = hp->h_next) == NIL_HOLE) return;
   if (hp->h_base + hp->h_len == next_ptr->h_base) {
-	hp->h_len += next_ptr->h_len;	/* first one gets second one's mem */
-	del_slot(hp, next_ptr);
+    hp->h_len += next_ptr->h_len;	/* first one gets second one's mem */
+    del_slot(hp, next_ptr);
   } else {
-	hp = next_ptr;
+	  hp = next_ptr;
   }
 
   /* If 'hp' now points to the last hole, return; otherwise, try to absorb its
@@ -180,17 +178,17 @@ register struct hole *hp;	/* ptr to hole to merge with its successors */
    */
   if ( (next_ptr = hp->h_next) == NIL_HOLE) return;
   if (hp->h_base + hp->h_len == next_ptr->h_base) {
-	hp->h_len += next_ptr->h_len;
-	del_slot(hp, next_ptr);
+    hp->h_len += next_ptr->h_len;
+    del_slot(hp, next_ptr);
   }
 }
 
 /*===========================================================================*
  *				mem_init				     *
  *===========================================================================*/
-PUBLIC void mem_init(chunks, free)
-struct memory *chunks;		/* list of free memory chunks */
-phys_clicks *free;		/* memory size summaries */
+/* list of free memory chunks */
+/* memory size summaries */
+PUBLIC void mem_init(struct memory *chunks, phys_clicks *free)
 {
 /* Initialize hole lists.  There are two lists: 'hole_head' points to a linked
  * list of all the holes (unused memory) in the system; 'free_slots' points to
@@ -214,8 +212,8 @@ phys_clicks *free;		/* memory size summaries */
   *free = 0;
   for (i=NR_MEMS-1; i>=0; i--) {
   	if (chunks[i].size > 0) {
-		free_mem(chunks[i].base, chunks[i].size);
-		*free += chunks[i].size;
-	}
+      free_mem(chunks[i].base, chunks[i].size);
+      *free += chunks[i].size;
+	  }
   }
 }

@@ -114,9 +114,9 @@ PRIVATE void get_work()
 /*===========================================================================*
  *				setreply				     *
  *===========================================================================*/
-PUBLIC void setreply(proc_nr, result)
-int proc_nr;			/* process to reply to */
-int result;			/* result of call (usually OK or error #) */
+/* process to reply to */
+/* result of call (usually OK or error #) */
+PUBLIC void setreply(int proc_nr, int result)
 {
 /* Fill in a reply message to be sent later to a user process.  System calls
  * may occasionally fill in other fields, this is only for the main return
@@ -261,8 +261,8 @@ PRIVATE void pm_init()
 /*===========================================================================*
  *				get_nice_value				     *
  *===========================================================================*/
-PRIVATE int get_nice_value(queue)
-int queue;				/* store mem chunks here */
+/* store mem chunks here */
+PRIVATE int get_nice_value(int queue)
 {
 /* Processes in the boot image have a priority assigned. The PM doesn't know
  * about priorities, but uses 'nice' values instead. The priority is between 
@@ -278,8 +278,8 @@ int queue;				/* store mem chunks here */
 /*===========================================================================*
  *				get_mem_chunks				     *
  *===========================================================================*/
-PRIVATE void get_mem_chunks(mem_chunks)
-struct memory *mem_chunks;			/* store mem chunks here */
+/* store mem chunks here */
+PRIVATE void get_mem_chunks(struct memory *mem_chunks)
 {
 /* Initialize the free memory list from the 'memory' boot variable.  Translate
  * the byte offsets and sizes in this list to clicks, properly truncated. Also
@@ -331,9 +331,9 @@ struct memory *mem_chunks;			/* store mem chunks here */
 /*===========================================================================*
  *				patch_mem_chunks			     *
  *===========================================================================*/
-PRIVATE void patch_mem_chunks(mem_chunks, map_ptr)
-struct memory *mem_chunks;			/* store mem chunks here */
-struct mem_map *map_ptr;			/* memory to remove */
+/* store mem chunks here */
+/* memory to remove */
+PRIVATE void patch_mem_chunks(struct memory *mem_chunks, struct mem_map *map_ptr)
 {
 /* Remove server memory from the free memory list. The boot monitor
  * promises to put processes at the start of memory chunks. The 

@@ -40,13 +40,13 @@ PUBLIC pid_t get_free_pid()
 
   /* Find a free pid for the child and put it in the table. */
   do {
-	t = 0;			
-	next_pid = (next_pid < NR_PIDS ? next_pid + 1 : INIT_PID + 1);
-	for (rmp = &mproc[0]; rmp < &mproc[NR_PROCS]; rmp++)
-		if (rmp->mp_pid == next_pid || rmp->mp_procgrp == next_pid) {
-			t = 1;
-			break;
-		}
+    t = 0;			
+    next_pid = (next_pid < NR_PIDS ? next_pid + 1 : INIT_PID + 1);
+    for (rmp = &mproc[0]; rmp < &mproc[NR_PROCS]; rmp++)
+      if (rmp->mp_pid == next_pid || rmp->mp_procgrp == next_pid) {
+        t = 1;
+        break;
+      }
   } while (t);					/* 't' = 0 means pid free */
   return(next_pid);
 }
@@ -54,10 +54,10 @@ PUBLIC pid_t get_free_pid()
 /*===========================================================================*
  *				allowed					     *
  *===========================================================================*/
-PUBLIC int allowed(name_buf, s_buf, mask)
-char *name_buf;			/* pointer to file name to be EXECed */
-struct stat *s_buf;		/* buffer for doing and returning stat struct*/
-int mask;			/* R_BIT, W_BIT, or X_BIT */
+/* pointer to file name to be EXECed */
+/* buffer for doing and returning stat struct*/
+/* R_BIT, W_BIT, or X_BIT */
+PUBLIC int allowed(char *name_buf, struct stat *s_buf, int mask)
 {
 /* Check to see if file can be accessed.  Return EACCES or ENOENT if the access
  * is prohibited.  If it is legal open the file and return a file descriptor.
@@ -84,8 +84,8 @@ int mask;			/* R_BIT, W_BIT, or X_BIT */
 
   /* Only regular files can be executed. */
   if (mask == X_BIT && (s_buf->st_mode & I_TYPE) != I_REGULAR) {
-	close(fd);
-	return(EACCES);
+    close(fd);
+    return(EACCES);
   }
   return(fd);
 }
@@ -103,10 +103,10 @@ PUBLIC int no_sys()
 /*===========================================================================*
  *				panic					     *
  *===========================================================================*/
-PUBLIC void panic(who, mess, num)
-char *who;			/* who caused the panic */
-char *mess;			/* panic message string */
-int num;			/* number to go with it */
+/* who caused the panic */
+/* panic message string */
+/* number to go with it */
+PUBLIC void panic(char *who, char *mess, int num)
 {
 /* An unrecoverable error has occurred.  Panics are caused when an internal
  * inconsistency is detected, e.g., a programming error or illegal value of a
@@ -115,15 +115,14 @@ int num;			/* number to go with it */
  */
   printf("PM panic (%s): %s", who, mess);
   if (num != NO_NUM) printf(": %d",num);
-  printf("\n");
+    printf("\n");
   sys_abort(RBT_PANIC);
 }
 
 /*===========================================================================*
  *				tell_fs					     *
  *===========================================================================*/
-PUBLIC void tell_fs(what, p1, p2, p3)
-int what, p1, p2, p3;
+PUBLIC void tell_fs(int what, int p1, int p2, int p3)
 {
 /* This routine is only used by PM to inform FS of certain events:
  *      tell_fs(CHDIR, slot, dir, 0)
@@ -147,19 +146,18 @@ int what, p1, p2, p3;
 /*===========================================================================*
  *				find_param				     *
  *===========================================================================*/
-PUBLIC char *find_param(name)
-const char *name;
+PUBLIC char *find_param(const char *name)
 {
   register const char *namep;
   register char *envp;
 
   for (envp = (char *) monitor_params; *envp != 0;) {
-	for (namep = name; *namep != 0 && *namep == *envp; namep++, envp++)
-		;
-	if (*namep == '\0' && *envp == '=') 
-		return(envp + 1);
-	while (*envp++ != 0)
-		;
+    for (namep = name; *namep != 0 && *namep == *envp; namep++, envp++)
+      ;
+    if (*namep == '\0' && *envp == '=') 
+      return(envp + 1);
+    while (*envp++ != 0)
+      ;
   }
   return(NULL);
 }
@@ -167,9 +165,9 @@ const char *name;
 /*===========================================================================*
  *				get_mem_map				     *
  *===========================================================================*/
-PUBLIC int get_mem_map(proc_nr, mem_map)
-int proc_nr;					/* process to get map of */
-struct mem_map *mem_map;			/* put memory map here */
+/* process to get map of */
+/* put memory map here */
+PUBLIC int get_mem_map(int proc_nr, struct mem_map *mem_map)
 {
   struct proc p;
   int s;
@@ -183,9 +181,9 @@ struct mem_map *mem_map;			/* put memory map here */
 /*===========================================================================*
  *				get_stack_ptr				     *
  *===========================================================================*/
-PUBLIC int get_stack_ptr(proc_nr, sp)
-int proc_nr;					/* process to get sp of */
-vir_bytes *sp;					/* put stack pointer here */
+/* process to get sp of */
+/* put stack pointer here */
+PUBLIC int get_stack_ptr(int proc_nr, vir_bytes *sp)
 {
   struct proc p;
   int s;
@@ -199,8 +197,7 @@ vir_bytes *sp;					/* put stack pointer here */
 /*===========================================================================*
  *				proc_from_pid				     *
  *===========================================================================*/
-PUBLIC int proc_from_pid(mp_pid)
-pid_t mp_pid;
+PUBLIC int proc_from_pid(pid_t mp_pid)
 {
 	int rmp;
 

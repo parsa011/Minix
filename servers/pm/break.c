@@ -59,10 +59,10 @@ PUBLIC int do_brk()
 /*===========================================================================*
  *				adjust  				     *
  *===========================================================================*/
-PUBLIC int adjust(rmp, data_clicks, sp)
-register struct mproc *rmp;	/* whose memory is being adjusted? */
-vir_clicks data_clicks;		/* how big is data segment to become? */
-vir_bytes sp;			/* new value of sp */
+/* whose memory is being adjusted? */
+/* how big is data segment to become? */
+/* new value of sp */
+PUBLIC int adjust(register struct mproc *rmp, vir_clicks data_clicks, vir_bytes sp)
 {
 /* See if data and stack segments can coexist, adjusting them if need be.
  * Memory is never allocated or freed.  Instead it is added or removed from the
@@ -99,16 +99,16 @@ vir_bytes sp;			/* new value of sp */
   /* Update data length (but not data orgin) on behalf of brk() system call. */
   old_clicks = mem_dp->mem_len;
   if (data_clicks != mem_dp->mem_len) {
-	mem_dp->mem_len = data_clicks;
-	changed |= DATA_CHANGED;
+    mem_dp->mem_len = data_clicks;
+    changed |= DATA_CHANGED;
   }
 
   /* Update stack length and origin due to change in stack pointer. */
   if (delta > 0) {
-	mem_sp->mem_vir -= delta;
-	mem_sp->mem_phys -= delta;
-	mem_sp->mem_len += delta;
-	changed |= STACK_CHANGED;
+    mem_sp->mem_vir -= delta;
+    mem_sp->mem_phys -= delta;
+    mem_sp->mem_len += delta;
+    changed |= STACK_CHANGED;
   }
 
   /* Do the new data and stack segment sizes fit in the address space? */
@@ -116,16 +116,16 @@ vir_bytes sp;			/* new value of sp */
   r = (rmp->mp_seg[D].mem_vir + rmp->mp_seg[D].mem_len > 
           rmp->mp_seg[S].mem_vir) ? ENOMEM : OK;
   if (r == OK) {
-	if (changed) sys_newmap((int)(rmp - mproc), rmp->mp_seg);
-	return(OK);
+    if (changed) sys_newmap((int)(rmp - mproc), rmp->mp_seg);
+    return(OK);
   }
 
   /* New sizes don't fit or require too many page/segment registers. Restore.*/
   if (changed & DATA_CHANGED) mem_dp->mem_len = old_clicks;
   if (changed & STACK_CHANGED) {
-	mem_sp->mem_vir += delta;
-	mem_sp->mem_phys += delta;
-	mem_sp->mem_len -= delta;
+    mem_sp->mem_vir += delta;
+    mem_sp->mem_phys += delta;
+    mem_sp->mem_len -= delta;
   }
   return(ENOMEM);
 }

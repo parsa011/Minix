@@ -61,22 +61,22 @@ PUBLIC int do_getsysinfo()
   int s;
 
   switch(m_in.info_what) {
-  case SI_KINFO:			/* kernel info is obtained via PM */
-        sys_getkinfo(&kinfo);
-        src_addr = (vir_bytes) &kinfo;
-        len = sizeof(struct kinfo);
-        break;
-  case SI_PROC_ADDR:			/* get address of PM process table */
-  	proc_addr = &mproc[0];
-  	src_addr = (vir_bytes) &proc_addr;
-  	len = sizeof(struct mproc *);
-  	break; 
-  case SI_PROC_TAB:			/* copy entire process table */
-        src_addr = (vir_bytes) mproc;
-        len = sizeof(struct mproc) * NR_PROCS;
-        break;
-  default:
-  	return(EINVAL);
+    case SI_KINFO:			/* kernel info is obtained via PM */
+          sys_getkinfo(&kinfo);
+          src_addr = (vir_bytes) &kinfo;
+          len = sizeof(struct kinfo);
+          break;
+    case SI_PROC_ADDR:			/* get address of PM process table */
+      proc_addr = &mproc[0];
+      src_addr = (vir_bytes) &proc_addr;
+      len = sizeof(struct mproc *);
+      break; 
+    case SI_PROC_TAB:			/* copy entire process table */
+          src_addr = (vir_bytes) mproc;
+          len = sizeof(struct mproc) * NR_PROCS;
+          break;
+    default:
+      return(EINVAL);
   }
 
   dst_addr = (vir_bytes) m_in.info_where;
@@ -136,27 +136,26 @@ PUBLIC int do_reboot()
   if (mp->mp_effuid != SUPER_USER) return(EPERM);
 
   switch (m_in.reboot_flag) {
-  case RBT_HALT:
-  case RBT_PANIC:
-  case RBT_RESET:
-	abort_flag = m_in.reboot_flag;
-	break;
-  case RBT_REBOOT:
-	code_len = strlen(REBOOT_CODE) + 1;
-	strncpy(monitor_code, REBOOT_CODE, code_len);        
-	abort_flag = RBT_MONITOR;
-	break;
-  case RBT_MONITOR:
-	code_len = m_in.reboot_strlen + 1;
-	if (code_len > sizeof(monitor_code)) return(EINVAL);
-	if (sys_datacopy(who, (vir_bytes) m_in.reboot_code,
-		PM_PROC_NR, (vir_bytes) monitor_code,
-		(phys_bytes) (code_len)) != OK) return(EFAULT);
-	if (monitor_code[code_len-1] != 0) return(EINVAL);
-	abort_flag = RBT_MONITOR;
-	break;
-  default:
-	return(EINVAL);
+    case RBT_HALT:
+    case RBT_PANIC:
+    case RBT_RESET:
+      abort_flag = m_in.reboot_flag;
+      break;
+    case RBT_REBOOT:
+      code_len = strlen(REBOOT_CODE) + 1;
+      strncpy(monitor_code, REBOOT_CODE, code_len);        
+      abort_flag = RBT_MONITOR;
+      break;
+    case RBT_MONITOR:
+      code_len = m_in.reboot_strlen + 1;
+      if (code_len > sizeof(monitor_code)) return(EINVAL);
+      if (sys_datacopy(who, (vir_bytes) m_in.reboot_code,PM_PROC_NR, (vir_bytes) monitor_code,(phys_bytes) (code_len)) != OK) 
+        return(EFAULT);
+      if (monitor_code[code_len-1] != 0) return(EINVAL);
+      abort_flag = RBT_MONITOR;
+      break;
+    default:
+      return(EINVAL);
   }
 
   check_sig(-1, SIGKILL); 		/* kill all processes except init */
@@ -236,85 +235,85 @@ PUBLIC int do_svrctl()
 
   /* Control operations local to the PM. */
   switch(req) {
-  case MMSETPARAM:
-  case MMGETPARAM: {
-      struct sysgetenv sysgetenv;
-      char search_key[64];
-      char *val_start;
-      size_t val_len;
-      size_t copy_len;
+    case MMSETPARAM:
+    case MMGETPARAM: {
+        struct sysgetenv sysgetenv;
+        char search_key[64];
+        char *val_start;
+        size_t val_len;
+        size_t copy_len;
 
-      /* Copy sysgetenv structure to PM. */
-      if (sys_datacopy(who, ptr, SELF, (vir_bytes) &sysgetenv, 
-              sizeof(sysgetenv)) != OK) return(EFAULT);  
+        /* Copy sysgetenv structure to PM. */
+        if (sys_datacopy(who, ptr, SELF, (vir_bytes) &sysgetenv, 
+                sizeof(sysgetenv)) != OK) return(EFAULT);  
 
-      /* Set a param override? */
-      if (req == MMSETPARAM) {
-  	if (local_params >= MAX_LOCAL_PARAMS) return ENOSPC;
-  	if (sysgetenv.keylen <= 0
-  	 || sysgetenv.keylen >=
-  	 	 sizeof(local_param_overrides[local_params].name)
-  	 || sysgetenv.vallen <= 0
-  	 || sysgetenv.vallen >=
-  	 	 sizeof(local_param_overrides[local_params].value))
-  		return EINVAL;
-  		
+        /* Set a param override? */
+        if (req == MMSETPARAM) {
+          if (local_params >= MAX_LOCAL_PARAMS) return ENOSPC;
+          if (sysgetenv.keylen <= 0
+          || sysgetenv.keylen >=
+            sizeof(local_param_overrides[local_params].name)
+          || sysgetenv.vallen <= 0
+          || sysgetenv.vallen >=
+            sizeof(local_param_overrides[local_params].value))
+            return EINVAL;
+      
           if ((s = sys_datacopy(who, (vir_bytes) sysgetenv.key,
             SELF, (vir_bytes) local_param_overrides[local_params].name,
-               sysgetenv.keylen)) != OK)
-               	return s;
+              sysgetenv.keylen)) != OK)
+                return s;
           if ((s = sys_datacopy(who, (vir_bytes) sysgetenv.val,
             SELF, (vir_bytes) local_param_overrides[local_params].value,
               sysgetenv.keylen)) != OK)
-               	return s;
+                return s;
             local_param_overrides[local_params].name[sysgetenv.keylen] = '\0';
             local_param_overrides[local_params].value[sysgetenv.vallen] = '\0';
 
-  	local_params++;
+          local_params++;
 
-  	return OK;
-      }
+          return OK;
+        }
 
-      if (sysgetenv.keylen == 0) {	/* copy all parameters */
-          val_start = monitor_params;
-          val_len = sizeof(monitor_params);
-      } 
-      else {				/* lookup value for key */
-      	  int p;
-          /* Try to get a copy of the requested key. */
-          if (sysgetenv.keylen > sizeof(search_key)) return(EINVAL);
-          if ((s = sys_datacopy(who, (vir_bytes) sysgetenv.key,
-                  SELF, (vir_bytes) search_key, sysgetenv.keylen)) != OK)
-              return(s);
+        if (sysgetenv.keylen == 0) {	/* copy all parameters */
+            val_start = monitor_params;
+            val_len = sizeof(monitor_params);
+        } 
+        else {				/* lookup value for key */
+            int p;
+            /* Try to get a copy of the requested key. */
+            if (sysgetenv.keylen > sizeof(search_key)) return(EINVAL);
+            if ((s = sys_datacopy(who, (vir_bytes) sysgetenv.key,
+                    SELF, (vir_bytes) search_key, sysgetenv.keylen)) != OK)
+                return(s);
 
-          /* Make sure key is null-terminated and lookup value.
-           * First check local overrides.
-           */
-          search_key[sysgetenv.keylen-1]= '\0';
-          for(p = 0; p < local_params; p++) {
-          	if (!strcmp(search_key, local_param_overrides[p].name)) {
-          		val_start = local_param_overrides[p].value;
-          		break;
-          	}
-          }
-          if (p >= local_params && (val_start = find_param(search_key)) == NULL)
-               return(ESRCH);
-          val_len = strlen(val_start) + 1;
-      }
+            /* Make sure key is null-terminated and lookup value.
+            * First check local overrides.
+            */
+            search_key[sysgetenv.keylen-1]= '\0';
+            for(p = 0; p < local_params; p++) {
+              if (!strcmp(search_key, local_param_overrides[p].name)) {
+                val_start = local_param_overrides[p].value;
+                break;
+              }
+            }
+            if (p >= local_params && (val_start = find_param(search_key)) == NULL)
+                return(ESRCH);
+            val_len = strlen(val_start) + 1;
+        }
 
-      /* See if it fits in the client's buffer. */
-      if (val_len > sysgetenv.vallen)
-      	return E2BIG;
+        /* See if it fits in the client's buffer. */
+        if (val_len > sysgetenv.vallen)
+          return E2BIG;
 
-      /* Value found, make the actual copy (as far as possible). */
-      copy_len = MIN(val_len, sysgetenv.vallen); 
-      if ((s=sys_datacopy(SELF, (vir_bytes) val_start, 
-              who, (vir_bytes) sysgetenv.val, copy_len)) != OK)
-          return(s);
+        /* Value found, make the actual copy (as far as possible). */
+        copy_len = MIN(val_len, sysgetenv.vallen); 
+        if ((s=sys_datacopy(SELF, (vir_bytes) val_start, 
+                who, (vir_bytes) sysgetenv.val, copy_len)) != OK)
+            return(s);
 
-      return OK;
-  }
-  default:
-	return(EINVAL);
+        return OK;
+    }
+    default:
+      return(EINVAL);
   }
 }

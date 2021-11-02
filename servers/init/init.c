@@ -357,11 +357,11 @@ int execute(char **cmd)
   return -1;
 }
 
-void wtmp(type, linenr, line, pid)
-int type;			/* type of entry */
-int linenr;			/* line number in ttytab */
-char *line;			/* tty name (only good on login) */
-pid_t pid;			/* pid of process */
+/* type of entry */
+/* line number in ttytab */
+/* tty name (only good on login) */
+/* pid of process */
+void wtmp(int type, int linenr, char *line, pid_t pid)
 {
 /* Log an event into the UTMP and WTMP files. */
 
@@ -438,16 +438,12 @@ pid_t pid;			/* pid of process */
   }
 }
 
-void tell(fd, s)
-int fd;
-char *s;
+void tell(int fd, char *s)
 {
 	write(fd, s, strlen(s));
 }
 
-void report(fd, label)
-int fd;
-char *label;
+void report(int fd, char *label)
 {
 	int err = errno;
 
